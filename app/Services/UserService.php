@@ -34,7 +34,6 @@ class UserService {
     public function createUser(array $data) {
         $data['password'] = bcrypt($data['password']);
         $data = $this->repository->create($data);
-        dd($data);
         if (empty($data)) {
             return ['status' => false, 'data' => $data];
         }
