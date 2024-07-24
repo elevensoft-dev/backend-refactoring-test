@@ -4,7 +4,7 @@
 
 A implementação de métodos de teste unitário para o controlador de usuários (`UserController`) em uma aplicação Laravel. Os testes cobrem tanto cenários de sucesso quanto de falha, verificando os status codes apropriados para cada situação. (`UserControllerTest`)
 
-1. Instalae e configura o projeto
+1. Instala e configura o projeto
    
 `make install`
 
