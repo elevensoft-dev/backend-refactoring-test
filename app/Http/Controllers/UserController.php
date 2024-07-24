@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ValidateUserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Services\UserService;
+
 
 class UserController extends Controller
 {
-    private User $user;
+    protected $service;
 
-    function __construct(User $user)
+    function __construct(UserService $service)
     {
-        $this->user = $user;
+        $this->service = $service;
     }
 
     /**
@@ -48,9 +50,15 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function index(Request $request)
+    public function index(ValidateUserRequest $request)
     {
-        return $this->user->get();
+        $data = $this->service->getAllUser();
+
+        if($data['status']) {
+            return response()->json($data['data'], 200);
+        }
+
+        return response()->json($data['data'], 400);
     }
 
     /**
@@ -88,9 +96,15 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function show(User $user)
+    public function show(int $id)
     {
-        return $user;
+        $data = $this->service->getUserById($id);
+
+        if($data['status']) {
+            return response()->json($data['data'], 200);
+        }
+
+        return response()->json($data['data'], 400);
     }
 
     /**
@@ -126,15 +140,15 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function store(Request $request)
+    public function store(ValidateUserRequest $request)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        $data = $this->service->createUser($request->all());
 
-        return $this->user->create($data);
+        if($data['status']) {
+            return response()->json($data['data'], 200);
+        }
+
+        return response()->json($data['data'], 400);
     }
 
     /**
@@ -176,17 +190,15 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function update(Request $request, User $user)
+    public function update(int $id, ValidateUserRequest $request)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        $data = $this->service->updateUser($id, $request->all());
 
-        $user->update($data);
+        if($data['status']) {
+            return response()->json($data['data'], 200);
+        }
 
-        return $user;
+        return response()->json($data['data'], 400);
     }
 
     /**
@@ -224,11 +236,15 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function destroy(User $user)
+    public function destroy(int $id)
     {
-        $user->delete();
+        $data = $this->service->deleteUser($id);
 
-        return $user;
+        if($data['status']) {
+            return response()->json($data['data'], 200);
+        }
+
+        return response()->json($data['data'], 400);
     }
 }
 
