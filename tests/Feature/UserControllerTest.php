@@ -20,6 +20,7 @@ class UserControllerTest extends TestCase
     {
         $this->authenticatedUser();
         $userData = User::factory()->make()->toArray();
+        $userData['password'] = '123456a';
 
         $response = $this->postJson('/api/users', $userData);
 
@@ -27,10 +28,12 @@ class UserControllerTest extends TestCase
                  ->assertJson([
                     'name' => $userData['name'],
                     'email' => $userData['email'],
-                    'password' => $userData['password'];
                  ]);
     
         $this->assertDatabaseHas('users', ['email' => $userData['email']]);
+
+        $user = User::where('email', $userData['email'])->first();
+        $this->assertTrue(\Hash::check('123456a', $user->password));
     }
 
     public function it_can_update_a_user() 
@@ -41,7 +44,6 @@ class UserControllerTest extends TestCase
         $updateData = [
             'name' => 'Test name',
             'email' => 'test@hotmail.com',
-            'password' => '123456a'
         ];
 
         $response = $this->putJson("/api/users/{$user->id}", $updateData);
@@ -50,14 +52,12 @@ class UserControllerTest extends TestCase
                  ->assertJson([
                     'name' => 'Test name',
                     'email' => 'test@hotmail.com',
-                    'password' => '123456a'
                  ]);
 
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
             'name' => 'Test name',
             'email' => 'test@hotmail.com',
-            'password' => '123456a'
         ]);
     }
 
@@ -83,7 +83,7 @@ class UserControllerTest extends TestCase
                  ->assertJson([
                     'id' => $user->id,
                     'name' => $user->name,
-                    'email' => $user->email
+                    'email' => $user->email,
                  ]);
     }
 
