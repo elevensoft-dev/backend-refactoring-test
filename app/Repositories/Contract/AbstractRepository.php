@@ -7,26 +7,28 @@ abstract class AbstractRepository implements InterfaceRepository{
 
     public function all()
     {
-        $this->model->all();
+        return $this->model->all();
     }
 
     public function find(int $id)
     {
-        $this->model->find($id);
+        return $this->model->find($id);
     }
 
     public function create(array $data)
     {
-        $this->model->create($data);
+        dd($data);
+        return $this->model->create($data);
     }
 
-    public function update(array $data, int $id)
+    public function update($data, array $request)
     {
-        $this->model->update($data, $id);
+        $data->update($request);
+        return $data;
     }
 
     public function delete(int $id)
     {
-        $this->model->delete($id);
+        return $this->model->find($id)->delete();
     }
 }

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ValidateUserRequest;
+use Log;
 use App\Models\User;
 use App\Services\UserService;
+use App\Http\Requests\ValidateUserRequest;
 
 
 class UserController extends Controller
@@ -50,7 +51,7 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function index(ValidateUserRequest $request)
+    public function index()
     {
         $data = $this->service->getAllUser();
 
@@ -142,13 +143,14 @@ class UserController extends Controller
      */
     public function store(ValidateUserRequest $request)
     {
-        $data = $this->service->createUser($request->all());
+        $data = $request->all();
+        $result = $this->service->createUser($data);
 
-        if($data['status']) {
-            return response()->json($data['data'], 200);
+        if($result['status']) {
+            return response()->json($result['data'], 200);
         }
 
-        return response()->json($data['data'], 400);
+        return response()->json($result['data'], 400);
     }
 
     /**
