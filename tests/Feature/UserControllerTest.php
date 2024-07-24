@@ -12,7 +12,7 @@ class UserControllerTest extends TestCase
     protected function authenticatedUser()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Passport::actingAs($user);
         return $user;
     }
     
