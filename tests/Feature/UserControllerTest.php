@@ -20,7 +20,7 @@ class UserControllerTest extends TestCase
     {
         $this->authenticatedUser();
         $userData = User::factory()->make()->toArray();
-        $userData['password'] = '123456a';
+        $userData['password'] = \Hash::make("123456a", ['rounds' => 12]);
 
         $response = $this->postJson('/api/users', $userData);
 
