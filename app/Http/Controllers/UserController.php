@@ -179,7 +179,6 @@ class UserController extends Controller
     public function update(int $id, ValidateUserRequest $request): JsonResponse
     {
         $data = $this->service->updateUser($id, $request->all());
-
         return $this->generateResponse($data);
     }
 

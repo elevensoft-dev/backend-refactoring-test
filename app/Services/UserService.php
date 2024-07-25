@@ -59,25 +59,13 @@ class UserService
 
     public function deleteUser(int $id): array
     {
-         $user = $this->repository->find($id);
-
+        $user = $this->repository->find($id);
         if (!$user) {
             return $this->formatResponse(400, 'User not found');
         }
 
         $this->repository->delete($id);
         return $this->formatResponse(200, 'User deleted successfully');
-    }
-
-
-
-    private function checkExistUser(int $id)
-    {
-        $user = $this->repository->find($id);
-
-        if (!$user) {
-            return $this->formatResponse(400, 'User not found');
-        }
     }
 
     private function formatResponse(int $status, $data): array
