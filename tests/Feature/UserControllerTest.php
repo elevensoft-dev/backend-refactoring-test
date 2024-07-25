@@ -39,10 +39,9 @@ class UserControllerTest extends TestCase
             'name' => 'John Doe',
             'email' => 'john@example.com',
             'password' => 'password',
-            'password_confirmation' => 'password',
         ];
         $response = $this->post('/api/users', $data);
-        $this->assertEquals(200, $response->status());
+        $this->assertEquals(201, $response->status());
         $this->assertJson($response->getContent());
     }
 

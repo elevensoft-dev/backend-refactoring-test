@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Log;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 use App\Http\Requests\ValidateUserRequest;
 
 
@@ -51,15 +51,10 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $data = $this->service->getAllUser();
-
-        if($data['status']) {
-            return response()->json($data['data'], 200);
-        }
-
-        return response()->json($data['data'], 400);
+        return $this->generateResponse($data);
     }
 
     /**
@@ -97,15 +92,10 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function show(int $id)
+    public function show(int $id): JsonResponse
     {
         $data = $this->service->getUserById($id);
-
-        if($data['status']) {
-            return response()->json($data['data'], 200);
-        }
-
-        return response()->json($data['data'], 400);
+        return $this->generateResponse($data);
     }
 
     /**
@@ -141,16 +131,10 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function store(ValidateUserRequest $request)
+    public function store(ValidateUserRequest $request): JsonResponse
     {
-        $data = $request->all();
-        $result = $this->service->createUser($data);
-
-        if($result['status']) {
-            return response()->json($result['data'], 200);
-        }
-
-        return response()->json($result['data'], 400);
+        $data = $this->service->createUser($request->all());
+        return $this->generateResponse($data);
     }
 
     /**
@@ -192,15 +176,11 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function update(int $id, ValidateUserRequest $request)
+    public function update(int $id, ValidateUserRequest $request): JsonResponse
     {
         $data = $this->service->updateUser($id, $request->all());
 
-        if($data['status']) {
-            return response()->json($data['data'], 200);
-        }
-
-        return response()->json($data['data'], 400);
+        return $this->generateResponse($data);
     }
 
     /**
@@ -238,15 +218,15 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         $data = $this->service->deleteUser($id);
+        return $this->generateResponse($data);
+    }
 
-        if($data['status']) {
-            return response()->json($data['data'], 200);
-        }
-
-        return response()->json($data['data'], 400);
+    private function generateResponse(array $data): JsonResponse
+    {
+        return response()->json($data['data'], $data['status']);
     }
 }
 

@@ -4,65 +4,87 @@ namespace App\Services;
 
 use App\Repositories\UserRepository;
 
-class UserService {
+class UserService
+{
 
     protected $repository;
-    public function __construct(UserRepository $repository) {
+    public function __construct(UserRepository $repository)
+    {
         $this->repository = $repository;
     }
 
-    public function getAllUser() {
-        $data =$this->repository->all();
+    public function getAllUser(): array
+    {
+        $result = $this->repository->all();
 
-        if (empty($data)) {
-            return ['status' => false, 'data' => $data];
+        if (empty($result)) {
+            return $this->formatResponse(400, 'User not found');
         }
 
-        return ['status' => true, 'data' => $data];
+        return $this->formatResponse(200, $result);
     }
 
-    public function getUserById(int $id) {
-        $data = $this->repository->find($id);
+    public function getUserById(int $id): array
+    {
+        $result = $this->repository->find($id);
 
-        if (empty($data)) {
-            return ['status' => false, 'data' => $data];
+        if (empty($result)) {
+            return $this->formatResponse(400, 'User not found');
         }
 
-        return ['status' => true, 'data' => $data];
+        return $this->formatResponse(200, $result);
     }
 
-    public function createUser(array $data) {
+    public function createUser(array $data): array
+    {
         $data['password'] = bcrypt($data['password']);
-        $data = $this->repository->create($data);
-        if (empty($data)) {
-            return ['status' => false, 'data' => $data];
+        $result = $this->repository->create($data);
+        if (empty($result)) {
+            return $this->formatResponse(400, 'User not created');
         }
 
-        return ['status' => true, 'data' => $data];
+        return $this->formatResponse(201, $result);
     }
 
-    public function updateUser(int $id, array $data) {
+    public function updateUser(int $id, array $data): array
+    {
         $user = $this->repository->find($id);
         if (empty($user)) {
-            return ['status' => false, 'data' => 'User not found'];
+            return $this->formatResponse(400, 'User not found');
         }
 
-        $data = $this->repository->update($user, $data);
-
-        if (empty($data)) {
-            return ['status' => false, 'data' => $data];
-        }
-
-        return ['status' => true, 'data' => $data];
+        $result = $this->repository->update($user, $data);
+        return $this->formatResponse(200, $result);
     }
 
-    public function deleteUser(int $id) {
-        $user = $this->repository->find($id);
-        if (empty($user)) {
-            return ['status' => false, 'data' => 'User not found'];
+    public function deleteUser(int $id): array
+    {
+         $user = $this->repository->find($id);
+
+        if (!$user) {
+            return $this->formatResponse(400, 'User not found');
         }
 
-        $result = $this->repository->delete($id);
-        return ['status' => $result, 'data' => 'User deleted successfully'];
+        $this->repository->delete($id);
+        return $this->formatResponse(200, 'User deleted successfully');
+    }
+
+
+
+    private function checkExistUser(int $id)
+    {
+        $user = $this->repository->find($id);
+
+        if (!$user) {
+            return $this->formatResponse(400, 'User not found');
+        }
+    }
+
+    private function formatResponse(int $status, $data): array
+    {
+        return [
+            'status' => $status,
+            'data' => $data
+        ];
     }
 }
