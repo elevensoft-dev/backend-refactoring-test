@@ -23,15 +23,15 @@ class ValidateUserRequest extends FormRequest
     {
         if ($this->isMethod('post')) {
             return [
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|min:3',
                 'email' => 'required|email|unique:users,email',
-                'password' => 'required|string|min:8|confirmed',
+                'password' => 'required|string|min:8',
             ];
         } elseif ($this->isMethod('put') || $this->isMethod('patch')) {
             return [
                 'name' => 'sometimes|string|max:255',
                 'email' => 'sometimes|email|unique:users,email,' . $this->route('id'),
-                'password' => 'sometimes|string|min:8|confirmed',
+                'password' => 'sometimes|string|min:8',
             ];
         }
 
@@ -46,6 +46,7 @@ class ValidateUserRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'name.min' => 'O nome deve ter pelo menos 3 caracteres.',
             'name.required' => 'O nome é obrigatório.',
             'name.string' => 'O nome deve ser uma string.',
             'name.max' => 'O nome não pode ter mais de 255 caracteres.',
@@ -55,7 +56,6 @@ class ValidateUserRequest extends FormRequest
             'password.required' => 'A senha é obrigatória.',
             'password.string' => 'A senha deve ser uma string.',
             'password.min' => 'A senha deve ter pelo menos 8 caracteres.',
-            'password.confirmed' => 'A confirmação da senha não corresponde.',
         ];
     }
 }
