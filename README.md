@@ -42,11 +42,11 @@ Ensure that docker is running on your local machine.
    make up
    ```
 
-The application will be accessible at `http://localhost:8000`.
+The application will be accessible at `http://localhost:8080`.
 
 ### Documentation
 
-The API is documented using Swagger. Ensure that your refactoring maintains or improves the clarity of the API documentation. The Swagger documentation can be accessed at `http://localhost:8000/api/documentation`.
+The API is documented using Swagger. Ensure that your refactoring maintains or improves the clarity of the API documentation. The Swagger documentation can be accessed at `http://localhost:8080/api/documentation`.
 
 ### Useful Makefile Targets
 
