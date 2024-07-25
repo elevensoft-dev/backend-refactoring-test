@@ -1,17 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\ValidateUserRequest;
+
 
 class UserController extends Controller
 {
-    private User $user;
+    protected $service;
 
-    function __construct(User $user)
+    function __construct(UserService $service)
     {
-        $this->user = $user;
+        $this->service = $service;
     }
 
     /**
@@ -48,9 +52,10 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function index(Request $request)
+    public function index(): JsonResponse
     {
-        return $this->user->get();
+        $data = $this->service->getAllUser();
+        return $this->generateResponse($data);
     }
 
     /**
@@ -88,9 +93,10 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function show(User $user)
+    public function show(int $id): JsonResponse
     {
-        return $user;
+        $data = $this->service->getUserById($id);
+        return $this->generateResponse($data);
     }
 
     /**
@@ -126,15 +132,10 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function store(Request $request)
+    public function store(ValidateUserRequest $request): JsonResponse
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
-
-        return $this->user->create($data);
+        $data = $this->service->createUser($request->all());
+        return $this->generateResponse($data);
     }
 
     /**
@@ -176,17 +177,10 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function update(Request $request, User $user)
+    public function update(int $id, ValidateUserRequest $request): JsonResponse
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
-
-        $user->update($data);
-
-        return $user;
+        $data = $this->service->updateUser($id, $request->all());
+        return $this->generateResponse($data);
     }
 
     /**
@@ -224,11 +218,15 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function destroy(User $user)
+    public function destroy(int $id): JsonResponse
     {
-        $user->delete();
+        $data = $this->service->deleteUser($id);
+        return $this->generateResponse($data);
+    }
 
-        return $user;
+    private function generateResponse(array $data): JsonResponse
+    {
+        return response()->json($data['data'], $data['status']);
     }
 }
 
