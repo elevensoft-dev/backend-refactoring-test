@@ -1,17 +1,26 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1\User;
 
-use App\Models\User;
+
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+
+use App\Interfaces\User\UserRepositoryInterface;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\User\UserResource;
+use App\Http\Requests\User\UserStoreRequest;
+use App\Http\Requests\User\UserUpdateRequest;
+
+
 
 class UserController extends Controller
 {
-    private User $user;
 
-    function __construct(User $user)
+    function __construct(
+        private readonly UserRepositoryInterface $userRepository)
     {
-        $this->user = $user;
+
     }
 
     /**
@@ -48,9 +57,23 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        return $this->user->get();
+        try {
+            $perPage = $request->has('perPage') ? $request->per_page : 20;
+            $page = $request->has('page') ? $request->page : 1;
+
+            $users = UserResource::collection($this->userRepository->getAllUsersPaginate($perPage, $page));
+            return response()->json([
+                'data' => $users,
+            ], JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json([
+                'data' => [],
+                'errorMessage' => $e->getMessage(),
+                'errorCode' => $e->getCode(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -88,15 +111,26 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function show(User $user)
+    public function show($id)
     {
-        return $user;
+        try {
+            $users = new UserResource($this->userRepository->getUserById($id));
+            return response()->json([
+                'data' => $users,
+            ], JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json([
+                'data' => [],
+                'errorMessage' => $e->getMessage(),
+                'errorCode' => $e->getCode(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
      * Store a newly created user in storage.
      *
-     * @return User
+     * @return JsonResponse
      *
      * @OA\Post(
      *      path="/users",
@@ -126,15 +160,22 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function store(Request $request)
+    public function store(UserStoreRequest $request): JsonResponse
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        try {
+            $user = new UserResource($this->userRepository->createUser($request->all()));
 
-        return $this->user->create($data);
+            return response()->json([
+                'message' => 'Usuario inserido com sucesso',
+                'data' => $user,
+            ], JsonResponse::HTTP_CREATED);
+        } catch (\Exception $e) {
+            return response()->json([
+                'data' => [],
+                'errorMessage' => $e->getMessage(),
+                'errorCode' => $e->getCode(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -176,17 +217,30 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function update(Request $request, User $user)
+    public function update(UserUpdateRequest $request, $id)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        try {
 
-        $user->update($data);
+            $data = $request->only([
+                'name',
+                'email',
+                'password',
+            ]);
 
-        return $user;
+            $this->userRepository->updateUser($id, $data);
+            $user = $this->userRepository->getUserById($id);
+
+            return response()->json([
+                'message' => "Usuário Alterado com sucesso",
+                'data' => $user,
+            ], JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json([
+                'data' => [],
+                'errorMessage' => $e->getMessage(),
+                'errorCode' => $e->getCode(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -224,11 +278,21 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        $user->delete();
+        try {
+            $this->userRepository->deleteUser($id);
 
-        return $user;
+            return response()->json([
+                'message' => 'Usuario excluido com sucesso'
+            ], JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json([
+                'data' => [],
+                'errorMessage' => $e->getMessage(),
+                'errorCode' => $e->getCode(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
 
