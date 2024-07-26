@@ -92,4 +92,33 @@ class UserControllerTest extends TestCase
 
      }
 
+     public function testCanUpdateUser(): void
+     {
+        $header = $this->makeAuth();
+        $user = User::factory()->create();
+        $data = [
+            "name" =>  fake()->name(),
+            "email" => fake()->email()
+        ];
+        $response = $this->putJson('/api/users/' . $user['id'], $data, $header);
+
+        $response->assertOk()->assertJsonCount(2);
+
+     }
+
+     public function testCanUpdatePassword(): void
+     {
+        $header = $this->makeAuth();
+        $user = User::factory()->create();
+
+        $data = [
+            "password" =>  fake()->password()
+        ];
+
+        $response = $this->putJson('/api/v1/users/alterar-senha/' . $user['id'], $data, $header);
+
+        $response->assertOk()->assertJsonCount(2);
+
+     }
+
 }

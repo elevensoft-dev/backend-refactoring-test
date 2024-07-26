@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\User\UserResource;
 use App\Http\Requests\User\UserStoreRequest;
 use App\Http\Requests\User\UserUpdateRequest;
-
+use App\Http\Requests\User\UserPasswordUpdateRequest;
 
 
 class UserController extends Controller
@@ -285,6 +285,69 @@ class UserController extends Controller
 
             return response()->json([
                 'message' => 'Usuario excluido com sucesso'
+            ], JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json([
+                'data' => [],
+                'errorMessage' => $e->getMessage(),
+                'errorCode' => $e->getCode(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Make a login
+     *
+     * @return JsonResponse
+     *
+     * @OA\Put(
+     *      path="/v1/users/alterar-senha/{id}",
+     *      operationId="updatePassword",
+     *      summary="Update password from user",
+     *      tags={"Users"},
+     *      description="Update password from user",
+     *      security={
+     *          {"bearerAuth": {}}
+     *      },
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="User ID",
+     *          required=true,
+     *          in="path",
+     *      ),
+     *      @OA\RequestBody(
+     *          required=true,
+     *          description="Provide All Info Below",
+     *          @OA\JsonContent(
+     *              required={"email","password"},
+     *              @OA\Property(property="password", type="string", format="text", example="password"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
+    public function updatePassword(UserPasswordUpdateRequest $request, $id) {
+        try {
+
+            $password = bcrypt($request->password);
+            $this->userRepository->updateUser($id, array('password' => $password));
+            $user = $this->userRepository->getUserById($id);
+
+            return response()->json([
+                'message' => "Senha Alterada com sucesso",
+                'data' => $user,
             ], JsonResponse::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
