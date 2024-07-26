@@ -93,18 +93,18 @@ class User extends Authenticatable
     protected $email;
 
     /**
-     * User verified at
+     * User email verified at
      *
      * @OA\Property(
-     *      property="email_verified_at",
-     *      description="User email verified at",
-     *      type="datetime",
-     *      example="2021-01-01 00:00:00"
+     *     property="email_verified_at",
+     *     description="User email verified at",
+     *     type="datetime",
+     *     example="2021-01-01 00:00:00"
      * )
      *
-     * @var Carbon
+     * @var Carbon|null
      */
-    private Carbon $email_verified_at;
+    protected $email_verified_at;
 
     /**
      * User password
