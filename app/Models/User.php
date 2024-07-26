@@ -138,15 +138,15 @@ class User extends Authenticatable
      * User created at
      *
      * @OA\Property(
-     *      property="created_at",
-     *      description="User created at",
-     *      type="datetime",
-     *      example="2021-01-01 00:00:00"
+     *     property="created_at",
+     *     description="User created at",
+     *     type="datetime",
+     *     example="2021-01-01 00:00:00"
      * )
      *
-     * @var Carbon
+     * @var Carbon|null
      */
-    private Carbon $created_at;
+    protected ?Carbon $created_at;
 
     /**
      * User updated at
