@@ -152,14 +152,14 @@ class User extends Authenticatable
      * User updated at
      *
      * @OA\Property(
-     *      property="updated_at",
-     *      description="User updated at",
-     *      type="datetime",
-     *      example="2021-01-01 00:00:00"
+     *     property="updated_at",
+     *     description="User updated at",
+     *     type="datetime",
+     *     example="2021-01-01 00:00:00"
      * )
      *
-     * @var Carbon
+     * @var Carbon|null
      */
-    private Carbon $updated_at;
+    protected ?Carbon $updated_at;
 }
 
