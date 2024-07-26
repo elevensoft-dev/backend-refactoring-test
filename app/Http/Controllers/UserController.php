@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -122,8 +123,6 @@ class UserController extends Controller
     /**
      * Store a newly created user in storage.
      *
-     * @return User
-     *
      * @OA\Post(
      *      path="/users",
      *      operationId="storeUser",
@@ -135,12 +134,21 @@ class UserController extends Controller
      *      },
      *      @OA\RequestBody(
      *          required=true,
+     *          @OA\JsonContent(
+     *              ref="#/components/schemas/User"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="User successfully created",
      *          @OA\JsonContent(ref="#/components/schemas/User")
      *      ),
      *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *          response=400,
+     *          description="Validation Error",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="errors", type="object", example={"name": ["The name field is required."]})
+     *          )
      *      ),
      *      @OA\Response(
      *          response=401,
@@ -149,18 +157,29 @@ class UserController extends Controller
      *      @OA\Response(
      *          response=403,
      *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal Server Error"
      *      )
      * )
+     * 
+     * @param \App\Http\Requests\StoreUserRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        try {
+            $user = $this->user->create([
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'password' => bcrypt($request->input('password')),
+            ]);
 
-        return $this->user->create($data);
+            return response()->json($user, Response::HTTP_CREATED);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to create user'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
