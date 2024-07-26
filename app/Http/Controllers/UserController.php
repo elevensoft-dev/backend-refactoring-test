@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
@@ -48,9 +49,14 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function index(Request $request)
+    public function index()
     {
-        return $this->user->get();
+        try {
+            $users = $this->user->all();
+            return response()->json($users, Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch users'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
