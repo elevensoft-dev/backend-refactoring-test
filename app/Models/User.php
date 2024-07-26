@@ -51,18 +51,18 @@ class User extends Authenticatable
     ];
 
     /**
-     * User id
+     * User ID
      *
      * @OA\Property(
-     *      property="id",
-     *      description="User id",
-     *      type="integer",
-     *      example=1
+     *     property="id",
+     *     description="User ID",
+     *     type="integer",
+     *     example=1
      * )
      *
      * @var int
      */
-    private int $id;
+    protected $id;
 
     /**
      * User name
