@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -187,9 +188,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update a specific user resource
-     *
-     * @return User
+     * Update a specific user resource.
      *
      * @OA\Put(
      *      path="/users/{id}",
@@ -205,10 +204,13 @@ class UserController extends Controller
      *          description="User ID",
      *          required=true,
      *          in="path",
+     *          @OA\Schema(type="integer")
      *      ),
      *      @OA\RequestBody(
      *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *          @OA\JsonContent(
+     *              ref="#/components/schemas/User"
+     *          )
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -216,26 +218,66 @@ class UserController extends Controller
      *          @OA\JsonContent(ref="#/components/schemas/User")
      *      ),
      *      @OA\Response(
+     *          response=400,
+     *          description="Validation Error",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="errors", type="object", example={"email": ["The email field must be a valid email address."]})
+     *          )
+     *      ),
+     *      @OA\Response(
      *          response=401,
-     *          description="Unauthenticated",
+     *          description="Unauthenticated"
      *      ),
      *      @OA\Response(
      *          response=403,
      *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="User not found",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="error", type="string", example="User not found")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal Server Error"
      *      )
      * )
+     * 
+     * @param \App\Http\Requests\UpdateUserRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, $id)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        try {
+            // Retrieve the user by ID
+            $user = $this->user->findOrFail($id);
 
-        $user->update($data);
+            // Extract data from the request
+            $data = $request->only(['name', 'email', 'password']);
 
-        return $user;
+            // Check if the password is provided and needs to be hashed
+            if ($request->has('password')) {
+                $data['password'] = bcrypt($data['password']);
+            } else {
+                // Remove the password key if not provided
+                unset($data['password']);
+            }
+
+            // Update the user with the validated data
+            $user->update($data);
+
+            // Return the updated user
+            return response()->json($user, Response::HTTP_OK);
+        } catch (ModelNotFoundException $e) {
+            // Return a JSON response if the user is not found
+            return response()->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            // Return a JSON response for other errors
+            return response()->json(['error' => 'Failed to update user'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
