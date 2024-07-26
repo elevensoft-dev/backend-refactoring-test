@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserController extends Controller
 {
@@ -48,6 +49,8 @@ class UserController extends Controller
      *          description="Forbidden"
      *      )
      * )
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -60,9 +63,7 @@ class UserController extends Controller
     }
 
     /**
-     * Show a specific user resource
-     *
-     * @return User
+     * Show a specific user resource.
      *
      * @OA\Get(
      *      path="/users/{id}",
@@ -78,6 +79,7 @@ class UserController extends Controller
      *          description="User ID",
      *          required=true,
      *          in="path",
+     *          @OA\Schema(type="integer")
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -91,12 +93,30 @@ class UserController extends Controller
      *      @OA\Response(
      *          response=403,
      *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Not Found"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal Server Error"
      *      )
      * )
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(User $user)
+    public function show($id)
     {
-        return $user;
+        try {
+            $user = $this->user->findOrFail($id);
+            return response()->json($user, Response::HTTP_OK);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch user'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
