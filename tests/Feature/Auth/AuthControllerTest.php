@@ -3,7 +3,8 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-class AuthTest extends TestCase
+
+class AuthControllerTest extends TestCase
 {
 
      public function testCanBeMakeLogin(): void

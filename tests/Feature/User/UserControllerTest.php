@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 
-class UserTest extends TestCase
+class UserControllerTest extends TestCase
 {
 
     public function setUp(): void
