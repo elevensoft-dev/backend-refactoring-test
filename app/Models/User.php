@@ -12,9 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @OA\Schema(
  *     title="User",
  *     description="User model",
- *     @OA\Xml(
- *         name="User"
- *     )
+ *     @OA\Xml(name="User")
  * )
  */
 class User extends Authenticatable
@@ -24,7 +22,7 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<string>
      */
     protected $fillable = [
         'name',
@@ -35,7 +33,7 @@ class User extends Authenticatable
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array<int, string>
+     * @var array<string>
      */
     protected $hidden = [
         'password',
