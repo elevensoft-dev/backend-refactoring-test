@@ -68,29 +68,29 @@ class User extends Authenticatable
      * User name
      *
      * @OA\Property(
-     *      property="name",
-     *      description="User name",
-     *      type="string",
-     *      example="John Doe"
+     *     property="name",
+     *     description="User name",
+     *     type="string",
+     *     example="John Doe"
      * )
      *
      * @var string
      */
-    private string $name;
+    protected $name;
 
     /**
      * User email
      *
      * @OA\Property(
-     *      property="email",
-     *      description="User email",
-     *      type="string",
-     *      example="example@elevensoft.dev"
+     *     property="email",
+     *     description="User email",
+     *     type="string",
+     *     example="example@elevensoft.dev"
      * )
      *
      * @var string
      */
-    private string $email;
+    protected $email;
 
     /**
      * User verified at
