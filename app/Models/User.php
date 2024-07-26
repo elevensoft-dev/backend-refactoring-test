@@ -62,7 +62,7 @@ class User extends Authenticatable
      *
      * @var int
      */
-    protected $id;
+    protected int $id;
 
     /**
      * User name
@@ -76,7 +76,7 @@ class User extends Authenticatable
      *
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * User email
@@ -90,7 +90,7 @@ class User extends Authenticatable
      *
      * @var string
      */
-    protected $email;
+    protected string $email;
 
     /**
      * User email verified at
@@ -104,7 +104,7 @@ class User extends Authenticatable
      *
      * @var Carbon|null
      */
-    protected $email_verified_at;
+    protected ?Carbon $email_verified_at;
 
     /**
      * User password
@@ -124,15 +124,15 @@ class User extends Authenticatable
      * User remember token
      *
      * @OA\Property(
-     *      property="remember_token",
-     *      description="User remember token",
-     *      type="string",
-     *      example="token"
+     *     property="remember_token",
+     *     description="User remember token",
+     *     type="string",
+     *     example="token"
      * )
      *
-     * @var string
+     * @var string|null
      */
-    private string $remember_token;
+    protected ?string $remember_token;
 
     /**
      * User created at
