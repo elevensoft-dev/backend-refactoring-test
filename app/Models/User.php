@@ -110,15 +110,15 @@ class User extends Authenticatable
      * User password
      *
      * @OA\Property(
-     *      property="password",
-     *      description="User password",
-     *      type="string",
-     *      example="password"
+     *     property="password",
+     *     description="User password",
+     *     type="string",
+     *     example="password"
      * )
      *
      * @var string
      */
-    private string $password;
+    protected $password;
 
     /**
      * User remember token
