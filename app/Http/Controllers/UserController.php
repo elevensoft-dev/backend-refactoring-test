@@ -170,10 +170,14 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         try {
+            // Extract the required fields from the request
+            $data = $request->only(['name', 'email', 'password']);
+
+            // Create a new user with the provided data
             $user = $this->user->create([
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'password' => bcrypt($request->input('password')),
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => bcrypt($data['password']),
             ]);
 
             return response()->json($user, Response::HTTP_CREATED);
@@ -235,9 +239,7 @@ class UserController extends Controller
     }
 
     /**
-     * Remove a specific user resource
-     *
-     * @return User
+     * Remove a specific user resource.
      *
      * @OA\Delete(
      *      path="/users/{id}",
@@ -253,27 +255,57 @@ class UserController extends Controller
      *          description="User ID",
      *          required=true,
      *          in="path",
+     *          @OA\Schema(type="integer")
      *      ),
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="User successfully deleted")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="User not found",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="error", type="string", example="User not found")
+     *          )
      *      ),
      *      @OA\Response(
      *          response=401,
-     *          description="Unauthenticated",
+     *          description="Unauthenticated"
      *      ),
      *      @OA\Response(
      *          response=403,
      *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal Server Error"
      *      )
      * )
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        $user->delete();
+        try {
+            // Attempt to find the user by ID
+            $user = $this->user->findOrFail($id);
 
-        return $user;
+            // Delete the user
+            $user->delete();
+
+            // Return a JSON response indicating successful deletion
+            return response()->json(['message' => 'User successfully deleted'], Response::HTTP_OK);
+        } catch (ModelNotFoundException $e) {
+            // Return a JSON response if the user is not found
+            return response()->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            // Return a JSON response for other errors
+            return response()->json(['error' => 'Failed to delete user'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
 
