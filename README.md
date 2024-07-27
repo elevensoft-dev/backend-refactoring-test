@@ -10,7 +10,7 @@ To begin the test, follow the steps outlined below:
 
 Ensure that you have the following prerequisites installed on your local machine:
 
-- PHP (>= 8.1)
+- PHP (>= 8.2)
 - Composer
 - Docker
 
