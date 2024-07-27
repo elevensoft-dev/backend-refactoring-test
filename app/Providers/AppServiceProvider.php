@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-
+        Passport::enableImplicitGrant();
         Passport::hashClientSecrets();
         Passport::useClientModel(Client::class);
     }

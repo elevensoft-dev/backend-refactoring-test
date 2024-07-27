@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\User\Update;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -12,6 +14,8 @@ class UserController extends Controller
     function __construct(User $user)
     {
         $this->user = $user;
+
+        $this->middleware('auth:sanctum');
     }
 
     /**
@@ -126,13 +130,9 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function store(Request $request)
+    public function store(RegisterRequest $request)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        $data = $request->validate();
 
         return $this->user->create($data);
     }
@@ -176,13 +176,9 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function update(Request $request, User $user)
+    public function update(Update $request, User $user)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        $data = $request->validate();
 
         $user->update($data);
 
@@ -231,4 +227,3 @@ class UserController extends Controller
         return $user;
     }
 }
-

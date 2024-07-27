@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticateController;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +16,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json(['Laravel ' . app()->version()], 200);
 });
