@@ -228,7 +228,7 @@ class UserController extends Controller
             ]);
 
             $this->userRepository->updateUser($id, $data);
-            $user = $this->userRepository->getUserById($id);
+            $user = new UserResource($this->userRepository->getUserById($id));
 
             return response()->json([
                 'message' => "Usuário Alterado com sucesso",
@@ -343,7 +343,7 @@ class UserController extends Controller
 
             $password = bcrypt($request->password);
             $this->userRepository->updateUser($id, array('password' => $password));
-            $user = $this->userRepository->getUserById($id);
+            $user = new UserResource($this->userRepository->getUserById($id));
 
             return response()->json([
                 'message' => "Senha Alterada com sucesso",
