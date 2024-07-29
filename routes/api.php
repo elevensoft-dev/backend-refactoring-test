@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\v1\User\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\v1\Auth\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,4 +14,12 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::apiResource('users', UserController::class);
+
+Route::post('/v1/auth/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:api')->group(function() {
+    Route::get('/v1/auth/me', [AuthController::class, 'me']);
+    Route::post('/v1/auth/logout', [AuthController::class, 'logout']);
+    Route::put('/v1/users/alterar-senha/{id}', [UserController::class, 'updatePassword']);
+    Route::apiResource('users', UserController::class);
+});
