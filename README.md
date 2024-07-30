@@ -1,3 +1,4 @@
+```markdown
 # Eleven Soft Backend Refactoring Test
 
 Welcome to the Eleven Soft Backend Refactoring Test repository! This Laravel-based project is designed to evaluate your backend skills, particularly in refactoring and improving the existing codebase.
@@ -16,7 +17,7 @@ Ensure that you have the following prerequisites installed on your local machine
 
 ### Installation and Setup
 
-Ensure that docker is running on your local machine.
+Ensure that Docker is running on your local machine.
 
 1. Clone this repository to your local machine:
 
@@ -42,11 +43,11 @@ Ensure that docker is running on your local machine.
    make up
    ```
 
-The application will be accessible at `http://localhost:8000`.
+The application will be accessible at `http://localhost:8080`.
 
 ### Documentation
 
-The API is documented using Swagger. Ensure that your refactoring maintains or improves the clarity of the API documentation. The Swagger documentation can be accessed at `http://localhost:8000/api/documentation`.
+The API is documented using Swagger. Ensure that your refactoring maintains or improves the clarity of the API documentation. The Swagger documentation can be accessed at `http://localhost:8080/api/documentation`.
 
 ### Useful Makefile Targets
 
@@ -93,8 +94,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 ### Commit Message Format
-Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
-format that includes a **type** and a **subject**:
+Each commit message consists of a **header**, a **body** and a **footer**. The header has a special format that includes a **type** and a **subject**:
 
 ```
 <type>: <subject>
@@ -106,8 +106,7 @@ format that includes a **type** and a **subject**:
 
 The **header** is mandatory.
 
-Any line of the commit message cannot be longer 100 characters! This allows the message to be easier
-to read on GitHub as well as in various git tools.
+Any line of the commit message cannot be longer than 100 characters! This allows the message to be easier to read on GitHub as well as in various git tools.
 
 The footer should contain a [closing reference to an issue](https://help.github.com/articles/closing-issues-via-commit-messages/) if any.
 
@@ -116,6 +115,7 @@ Samples: (even more [samples](https://github.com/angular/angular/commits/main))
 ```
 docs(changelog): update changelog to beta.5
 ```
+
 ```
 fix(release): need to depend on latest rxjs and zone.js
 
@@ -138,7 +138,6 @@ Must be one of the following:
 * **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
 * **test**: Adding missing tests or correcting existing tests
 
-
 ### Subject
 The subject contains a succinct description of the change:
 
@@ -151,12 +150,11 @@ Just as in the **subject**, use the imperative, present tense: "change" not "cha
 The body should include the motivation for the change and contrast this with previous behavior.
 
 ### Footer
-The footer should contain any information about **Breaking Changes** and is also the place to
-reference GitHub issues that this commit **Closes**.
+The footer should contain any information about **Breaking Changes** and is also the place to reference GitHub issues that this commit **Closes**.
 
 **Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines. The rest of the commit message is then used for this.
 
 A detailed explanation can be found in this [document][commit-message-format].
 
 [commit-message-format]: https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#
-
+```

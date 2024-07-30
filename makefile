@@ -1,70 +1,101 @@
+# Variables
+DOCKER_COMPOSE = docker-compose
+API_CONTAINER = api
+DB_CONTAINER = mysql
+
+# Phony targets
+.PHONY: install sleep ps up up-recreate down forget db-shell api-build api-db api-key api-env api-config-cache api-composer-install api-shell api-root-shell api-test api-test-feature api-test-php-unit api-build-swagger api-passport-key api-passport-generate fix-permissions
+
+# Install and setup the project
 install: api-env api-composer-install api-build up sleep api-db api-key api-passport-key api-passport-generate
 
+# Sleep for 3 seconds to allow services to start
 sleep:
 	sleep 3
 
+# Show Docker container status
 ps:
-	docker-compose ps
+	$(DOCKER_COMPOSE) ps
 
+# Start Docker containers
 up:
-	docker-compose up -d
+	$(DOCKER_COMPOSE) up -d
 
+# Recreate Docker containers
 up-recreate:
-	docker-compose up -d --force-recreate
+	$(DOCKER_COMPOSE) up -d --force-recreate
 
+# Stop and remove Docker containers
 down:
-	docker-compose down
+	$(DOCKER_COMPOSE) down
 
+# Stop and remove Docker containers, images, and volumes
 forget:
-	docker-compose down --rmi all --volumes
-	docker volume rm backend-test_sail-mysql 2>/dev/null
+	$(DOCKER_COMPOSE) down --rmi all --volumes @docker volume rm backend-test_sail-mysql 2>/dev/null
+		|| echo "Volume not found"
 
+# Access the MySQL shell
 db-shell:
 	mysql -h 127.0.0.1 -P 3306 -u sail -ppassword
 
+# Build the API Docker container without cache
 api-build:
-	USER_ID=$(shell id -u) GROUP_ID=$(shell id -g) docker-compose build --no-cache
+	USER_ID=$(shell id -u) GROUP_ID=$(shell id -g) $(DOCKER_COMPOSE) build --no-cache
 
+# Run database migrations and seed the database
 api-db:
-	docker-compose exec -it api php /var/www/html/artisan migrate:fresh
-	docker-compose exec -it api php /var/www/html/artisan db:seed
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) php /var/www/html/artisan migrate:fresh
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) php /var/www/html/artisan db:seed
 
+# Generate the application key
 api-key:
-	docker-compose exec -it api php /var/www/html/artisan key:generate
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) php /var/www/html/artisan key:generate
 
+# Copy the example environment file
 api-env:
 	cp .env.example .env
 
+# Cache the configuration
 api-config-cache:
-	docker-compose exec -it api php /var/www/html/artisan config:cache
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) php /var/www/html/artisan config:cache
 
+# Install Composer dependencies
 api-composer-install:
 	composer install --ignore-platform-reqs
 
+# Access the API container shell as the sail user
 api-shell:
-	docker-compose exec -it api bash -c 'su sail'
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) bash -c 'su sail'
 
+# Access the API container shell as root
 api-root-shell:
-	docker-compose exec -it api bash
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) bash
 
+# Run all PHPUnit tests
 api-test:
-	docker-compose exec -it api php /var/www/html/artisan test
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) php /var/www/html/artisan test
 
+# Run PHPUnit Feature tests
 api-test-feature:
-	docker-compose exec -it api php /var/www/html/artisan test --testsuite=Feature --stop-on-failure
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) php /var/www/html/artisan test --testsuite=Feature --stop-on-failure
 
+# Run PHPUnit tests using phpunit command
 api-test-php-unit:
-	docker-compose exec -it api php /var/www/html/artisan phpunit
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) php /var/www/html/artisan phpunit
 
+# Generate Swagger documentation
 api-build-swagger:
-	docker-compose exec -it api php /var/www/html/artisan l5-swagger:generate
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) php /var/www/html/artisan l5-swagger:generate
 
+# Generate Passport keys
 api-passport-key:
-	docker-compose exec -it api php /var/www/html/artisan  passport:keys --force
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) php /var/www/html/artisan passport:keys --force
 
+# Create a Passport client and save the output to a file
 api-passport-generate:
-	docker-compose exec -it api php /var/www/html/artisan passport:client --password --name='Laravel Password Grant Client' --provider=users > .passport
-	cat .passport
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) php /var/www/html/artisan passport:client --password --name='Laravel Password Grant Client' --provider=users > .passport
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) cat .passport
 
+# Fix permissions for storage and framework directories
 fix-permissions:
-	docker-compose exec -it api bash -c 'chmod -R 777 /var/www/html/storage/logs && chmod -R 777 /var/www/html/storage/framework'
+	$(DOCKER_COMPOSE) exec $(API_CONTAINER) bash -c 'chmod -R 755 /var/www/html/storage/logs && chmod -R 755 /var/www/html/storage/framework && find /var/www/html/storage -type f -exec chmod 644 {} \;'

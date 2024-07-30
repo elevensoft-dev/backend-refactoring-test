@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 
 /**
  * @OA\Schema(
@@ -61,10 +61,8 @@ class User extends Authenticatable
      *      type="integer",
      *      example=1
      * )
-     *
-     * @var int
      */
-    private int $id;
+    public int $id;
 
     /**
      * User name
@@ -75,10 +73,8 @@ class User extends Authenticatable
      *      type="string",
      *      example="John Doe"
      * )
-     *
-     * @var string
      */
-    private string $name;
+    public string $name;
 
     /**
      * User email
@@ -89,10 +85,8 @@ class User extends Authenticatable
      *      type="string",
      *      example="example@elevensoft.dev"
      * )
-     *
-     * @var string
      */
-    private string $email;
+    public string $email;
 
     /**
      * User verified at
@@ -103,10 +97,8 @@ class User extends Authenticatable
      *      type="datetime",
      *      example="2021-01-01 00:00:00"
      * )
-     *
-     * @var Carbon
      */
-    private Carbon $email_verified_at;
+    public ?Carbon $email_verified_at;
 
     /**
      * User password
@@ -117,10 +109,8 @@ class User extends Authenticatable
      *      type="string",
      *      example="password"
      * )
-     *
-     * @var string
      */
-    private string $password;
+    public string $password;
 
     /**
      * User remember token
@@ -131,10 +121,8 @@ class User extends Authenticatable
      *      type="string",
      *      example="token"
      * )
-     *
-     * @var string
      */
-    private string $remember_token;
+    public ?string $remember_token;
 
     /**
      * User created at
@@ -145,10 +133,8 @@ class User extends Authenticatable
      *      type="datetime",
      *      example="2021-01-01 00:00:00"
      * )
-     *
-     * @var Carbon
      */
-    private Carbon $created_at;
+    public ?Carbon $created_at;
 
     /**
      * User updated at
@@ -159,9 +145,6 @@ class User extends Authenticatable
      *      type="datetime",
      *      example="2021-01-01 00:00:00"
      * )
-     *
-     * @var Carbon
      */
-    private Carbon $updated_at;
+    public ?Carbon $updated_at;
 }
-

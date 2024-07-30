@@ -14,7 +14,7 @@ class UserTableSeeder extends Seeder
         \App\Models\User::factory()->create([
             'name' => 'example',
             'email' => 'example@elevensoft.dev',
-            'password' => bcrypt('password')
+            'password' => 'password',
         ]);
     }
 }

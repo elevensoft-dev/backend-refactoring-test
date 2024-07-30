@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
     private User $user;
 
-    function __construct(User $user)
+    public function __construct(User $user)
     {
         $this->user = $user;
     }
@@ -17,7 +19,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return JsonResponse
      *
      * @OA\Get(
      *      path="/users",
@@ -48,15 +50,17 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function index(Request $request)
+    public function index(): JsonResponse
     {
-        return $this->user->get();
+        $users = $this->user->all();
+        return response()->json($users, 200);
     }
 
     /**
-     * Show a specific user resource
+     * Show a specific user resource.
      *
-     * @return User
+     * @param int $id
+     * @return JsonResponse
      *
      * @OA\Get(
      *      path="/users/{id}",
@@ -85,18 +89,29 @@ class UserController extends Controller
      *      @OA\Response(
      *          response=403,
      *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Not Found"
      *      )
      * )
      */
-    public function show(User $user)
+    public function show(int $id): JsonResponse
     {
-        return $user;
+        $user = $this->user->find($id);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        return response()->json($user, 200);
     }
 
     /**
      * Store a newly created user in storage.
      *
-     * @return User
+     * @param StoreUserRequest $request
+     * @return JsonResponse
      *
      * @OA\Post(
      *      path="/users",
@@ -112,9 +127,13 @@ class UserController extends Controller
      *          @OA\JsonContent(ref="#/components/schemas/User")
      *      ),
      *      @OA\Response(
-     *          response=200,
+     *          response=201,
      *          description="Successful operation",
      *          @OA\JsonContent(ref="#/components/schemas/User")
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
      *      ),
      *      @OA\Response(
      *          response=401,
@@ -126,21 +145,22 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request): JsonResponse
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        $data = $request->validated();
+        $data['password'] = bcrypt($data['password']);
 
-        return $this->user->create($data);
+        $user = $this->user->create($data);
+
+        return response()->json($user, 201);
     }
 
     /**
-     * Update a specific user resource
+     * Update a specific user resource.
      *
-     * @return User
+     * @param UpdateUserRequest $request
+     * @param int $id
+     * @return JsonResponse
      *
      * @OA\Put(
      *      path="/users/{id}",
@@ -167,32 +187,47 @@ class UserController extends Controller
      *          @OA\JsonContent(ref="#/components/schemas/User")
      *      ),
      *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
+     *      ),
+     *      @OA\Response(
      *          response=401,
      *          description="Unauthenticated",
      *      ),
      *      @OA\Response(
      *          response=403,
      *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Not Found"
      *      )
      * )
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, int $id): JsonResponse
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        $user = $this->user->find($id);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        $data = $request->validated();
+
+        if (isset($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        }
 
         $user->update($data);
 
-        return $user;
+        return response()->json($user, 200);
     }
 
     /**
-     * Remove a specific user resource
+     * Remove a specific user resource.
      *
-     * @return User
+     * @param int $id
+     * @return JsonResponse
      *
      * @OA\Delete(
      *      path="/users/{id}",
@@ -210,9 +245,8 @@ class UserController extends Controller
      *          in="path",
      *      ),
      *      @OA\Response(
-     *          response=200,
+     *          response=204,
      *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
      *      ),
      *      @OA\Response(
      *          response=401,
@@ -221,14 +255,23 @@ class UserController extends Controller
      *      @OA\Response(
      *          response=403,
      *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Not Found"
      *      )
      * )
      */
-    public function destroy(User $user)
+    public function destroy(int $id): JsonResponse
     {
+        $user = $this->user->find($id);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
         $user->delete();
 
-        return $user;
+        return response()->json(null, 204);
     }
 }
-
