@@ -15,6 +15,157 @@
         }
     ],
     "paths": {
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Authenticate"
+                ],
+                "summary": "Login User",
+                "operationId": "aa7e51af7278dc63a52ef2e2e72d37db",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "example": {
+                                "email": "email@email.com",
+                                "password": "password"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Login success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "success": true,
+                                                "statusCode": 202,
+                                                "message": "User has been logged successfully.",
+                                                "data": {
+                                                    "id": 1,
+                                                    "name": "User Teste",
+                                                    "email": "email@email.com",
+                                                    "created_at": "2024-07-27T15:39:28.000000Z",
+                                                    "updated_at": "2024-07-28T21:49:06.000000Z",
+                                                    "bearer_token": "17|QJmAJPmZPxxcAFCp8XgfgQf6GzEghBvTEgkgEHrAf7040d89"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "meta": {
+                                                    "code": 401,
+                                                    "status": "fails",
+                                                    "message": "The provided credentials are incorrect.!"
+                                                },
+                                                "user": [],
+                                                "access_token": {
+                                                    "token": "",
+                                                    "type": "Bearer"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authenticate"
+                ],
+                "summary": "Logout User",
+                "operationId": "679748c80a7dea34dc983b4b9b1f9e55",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "message": "Unauthenticated."
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Successfully logged out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "meta": {
+                                                    "code": 202,
+                                                    "status": "success",
+                                                    "message": "Successfully logged out"
+                                                },
+                                                "data": []
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/users": {
             "get": {
                 "tags": [
@@ -324,6 +475,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Authenticate",
+            "description": "Authenticate"
+        },
         {
             "name": "Users",
             "description": "Users"
