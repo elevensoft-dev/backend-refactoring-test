@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class UserService
 {
@@ -22,6 +23,8 @@ class UserService
 
         $user = $this->user->create($payload);
 
+        Auth::login($user);
+
         return response()->json([
             'meta' => [
                 'code' => Response::HTTP_OK,
@@ -30,6 +33,10 @@ class UserService
             ],
             'data' => [
                 'user' => $user
+            ],
+            'access_token' => [
+                'token' => $user->createToken($payload['email'])->plainTextToken,
+                'type' => 'Bearer'
             ],
         ], Response::HTTP_OK);
     }
@@ -61,6 +68,37 @@ class UserService
             ],
         ], Response::HTTP_OK);
     }
+    public function update(array $payload, int $id): JsonResponse
+    {
+        $user = $this->user->find($id);
+
+        if (!$user) {
+            return response()->json([
+                'meta' => [
+                    'code' => Response::HTTP_NOT_FOUND,
+                    'status' => 'fails',
+                    'message' => 'User not found!',
+                ],
+                'data' => [
+                    'user' => []
+                ],
+                'access_token' => [],
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $user = $user->update($payload);
+
+        return response()->json([
+            'meta' => [
+                'code' => Response::HTTP_OK,
+                'status' => 'success',
+                'message' => 'Users updated successfully!',
+            ],
+            'data' => [
+                'user' => $user
+            ],
+        ], Response::HTTP_OK);
+    }
     public function delete(?int $id): JsonResponse
     {
         $user = $this->user->find($id);
@@ -78,6 +116,9 @@ class UserService
                 'access_token' => [],
             ], Response::HTTP_NOT_FOUND);
         }
+
+        $user->delete();
+
         return response()->json([
             'meta' => [
                 'code' => Response::HTTP_OK,
@@ -85,7 +126,7 @@ class UserService
                 'message' => 'User deleted successfully!',
             ],
             'data' => [
-                'user' => $user
+                'user' => []
             ],
         ], Response::HTTP_OK);
     }

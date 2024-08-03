@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Api\Swagger\User\UserSwagger;
 use App\Http\Requests\StoreRequest;
+use App\Http\Requests\UpdateRequest;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
@@ -37,17 +38,11 @@ class UserController extends Controller
         return (new UserService($this->user))->store($payload);
     }
 
-    public function update(Request $request, User $user)
+    public function update(UpdateRequest $request, $id)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        $payload = $request->validated();
 
-        $user->update($data);
-
-        return $user;
+        return (new UserService($this->user))->update($payload, $id);
     }
 
     public function destroy($id): JsonResponse

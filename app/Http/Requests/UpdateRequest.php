@@ -7,8 +7,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
-class StoreRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,10 +26,11 @@ class StoreRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'name' => 'required|min:8|max:255',
-            'email' => 'email|required|unique:users',
-            'password' => 'required|min:8|max:16|confirmed',
+            'email' => ['required', 'email', Rule::unique('users')->ignore(Auth::user()->id),],
+            'password' => 'nullable|min:8|max:16|confirmed',
         ];
     }
     public function failedValidation(Validator $validator)
