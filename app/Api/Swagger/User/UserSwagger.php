@@ -152,4 +152,28 @@ trait UserSwagger
     private function swagger_update(): void
     {
     }
+
+    #[
+        OA\Delete(
+            path: '/users/{id}',
+            operationId: 'deleteUser',
+            summary: 'Delete a specific user',
+            description: 'Deletes a specific user',
+            tags: ['Users'],
+            security: [
+                [
+                    'bearerAuth' => []
+                ]
+            ],
+            parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, description: 'User ID')],
+            responses: [
+                new OA\Response(response: Response::HTTP_OK,  description: 'Successful operation'),
+                new OA\Response(response: Response::HTTP_UNAUTHORIZED,  description: 'Unauthenticated'),
+                new OA\Response(response: Response::HTTP_FORBIDDEN,  description: 'Forbidden'),
+            ]
+        )
+    ]
+    private function swagger_delete(): void
+    {
+    }
 }
