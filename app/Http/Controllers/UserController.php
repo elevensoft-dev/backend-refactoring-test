@@ -38,45 +38,6 @@ class UserController extends Controller
         return $this->user->create($data);
     }
 
-    /**
-     * Update a specific user resource
-     *
-     * @return User
-     *
-     * @OA\Put(
-     *      path="/users/{id}",
-     *      operationId="updateUser",
-     *      summary="Update a specific user",
-     *      tags={"Users"},
-     *      description="Updates a specific user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\Parameter(
-     *          name="id",
-     *          description="User ID",
-     *          required=true,
-     *          in="path",
-     *      ),
-     *      @OA\RequestBody(
-     *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
-     * )
-     */
     public function update(Request $request, User $user)
     {
         $data = $request->only([

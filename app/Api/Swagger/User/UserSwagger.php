@@ -106,4 +106,50 @@ trait UserSwagger
     private function swagger_store(): void
     {
     }
+    #[
+        OA\Put(
+            path: 'users/{id}',
+            operationId: 'updateUser',
+            summary: 'Update a specific user',
+            description: "Updates a specific user",
+            tags: ['Users'],
+            security: [
+                [
+                    'bearerAuth' => []
+                ]
+            ],
+            parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, description: 'User ID')],
+            requestBody: new OA\RequestBody(
+                required: true,
+                content: new OA\MediaType(
+                    mediaType: 'application/json',
+                    schema: new OA\Schema(
+                        required: ['name', 'email'],
+                        properties: [
+                            new OA\Property(property: 'name', type: 'string'),
+                            new OA\Property(property: 'email', type: 'string'),
+                            new OA\Property(property: 'password', type: 'string'),
+                            new OA\Property(property: 'password_confirmation', type: 'string'),
+                        ]
+                    ),
+                    example: [
+                        "name" => "John Doe",
+                        "email" => "example@elevensoft.dev",
+                        "password" => "password",
+                        "password_confirmation" => "password",
+                    ]
+                )
+
+
+            ),
+            responses: [
+                new OA\Response(response: Response::HTTP_OK,  description: 'Successful operation'),
+                new OA\Response(response: Response::HTTP_UNAUTHORIZED,  description: 'Unauthenticated'),
+                new OA\Response(response: Response::HTTP_FORBIDDEN,  description: 'Forbidden'),
+            ]
+        )
+    ]
+    private function swagger_update(): void
+    {
+    }
 }
