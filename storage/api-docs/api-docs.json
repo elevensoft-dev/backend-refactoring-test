@@ -10,38 +10,153 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8080/api",
-            "description": "API Server"
+            "url": "http://localhost:8001/api",
+            "description": " API SErve"
         }
     ],
     "paths": {
-        "/users": {
-            "get": {
+        "/auth/login": {
+            "post": {
                 "tags": [
-                    "Users"
+                    "Authenticate"
                 ],
-                "summary": "Get list of users",
-                "description": "Returns list of users",
-                "operationId": "getUsersList",
+                "summary": "Login User",
+                "operationId": "aa7e51af7278dc63a52ef2e2e72d37db",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "example": {
+                                "email": "email@email.com",
+                                "password": "password"
+                            }
+                        }
+                    }
+                },
                 "responses": {
-                    "200": {
-                        "description": "Successful operation",
+                    "202": {
+                        "description": "Login success.",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/User"
-                                    }
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "success": true,
+                                                "statusCode": 202,
+                                                "message": "User has been logged successfully.",
+                                                "data": {
+                                                    "id": 1,
+                                                    "name": "User Teste",
+                                                    "email": "email@email.com",
+                                                    "created_at": "2024-07-27T15:39:28.000000Z",
+                                                    "updated_at": "2024-07-28T21:49:06.000000Z",
+                                                    "bearer_token": "17|QJmAJPmZPxxcAFCp8XgfgQf6GzEghBvTEgkgEHrAf7040d89"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated"
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "meta": {
+                                                    "code": 401,
+                                                    "status": "fails",
+                                                    "message": "The provided credentials are incorrect.!"
+                                                },
+                                                "user": [],
+                                                "access_token": {
+                                                    "token": "",
+                                                    "type": "Bearer"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authenticate"
+                ],
+                "summary": "Logout User",
+                "operationId": "679748c80a7dea34dc983b4b9b1f9e55",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "message": "Unauthenticated."
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
-                    "403": {
-                        "description": "Forbidden"
+                    "202": {
+                        "description": "Successfully logged out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "meta": {
+                                                    "code": 202,
+                                                    "status": "success",
+                                                    "message": "Successfully logged out"
+                                                },
+                                                "data": []
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -49,34 +164,24 @@
                         "bearerAuth": []
                     }
                 ]
-            },
-            "post": {
+            }
+        },
+        "/users": {
+            "get": {
                 "tags": [
                     "Users"
                 ],
-                "summary": "Store a new user",
-                "description": "Stores a new user",
-                "operationId": "storeUser",
+                "summary": "Get List of users",
+                "description": "Returns list of users",
+                "operationId": "getUsersList",
                 "requestBody": {
-                    "required": true,
                     "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/User"
-                            }
-                        }
+                        "application/json": {}
                     }
                 },
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        }
+                        "description": "Successful operation"
                     },
                     "401": {
                         "description": "Unauthenticated"
@@ -110,63 +215,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Update a specific user",
-                "description": "Updates a specific user",
-                "operationId": "updateUser",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "User ID",
-                        "required": true
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/User"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        }
+                        "description": "Successful operation"
                     },
                     "401": {
                         "description": "Unauthenticated"
@@ -198,14 +247,137 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/User"
-                                }
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "users": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Store a new user",
+                "description": "Stores a new user",
+                "operationId": "storeUser",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "example": {
+                                "name": "John Doe",
+                                "email": "example@elevensoft.dev",
+                                "password": "password",
+                                "password_confirmation": "password"
                             }
                         }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "users/{id}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update a specific user",
+                "description": "Updates a specific user",
+                "operationId": "updateUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "example": {
+                                "name": "John Doe",
+                                "email": "example@elevensoft.dev",
+                                "password": "password",
+                                "password_confirmation": "password"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
                     },
                     "401": {
                         "description": "Unauthenticated"
@@ -293,13 +465,23 @@
                 "scheme": "https",
                 "flows": {
                     "password": {
-                        "authorizationUrl": "http://localhost:8080/oauth/authorize",
-                        "tokenUrl": "http://localhost:8080/oauth/token",
-                        "refreshUrl": "http://localhost:8080/token/refresh",
+                        "authorizationUrl": "http://localhost:8001/oauth/authorize",
+                        "tokenUrl": "http://localhost:8001/oauth/token",
+                        "refreshUrl": "http://localhost:8001/token/refresh",
                         "scopes": []
                     }
                 }
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "Authenticate",
+            "description": "Authenticate"
+        },
+        {
+            "name": "Users",
+            "description": "Users"
+        }
+    ]
 }
