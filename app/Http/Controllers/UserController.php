@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Api\Swagger\User\UserSwagger;
+use App\Http\Requests\StoreRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -27,7 +28,7 @@ class UserController extends Controller
         return $user;
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
         $data = $request->only([
             'name',
