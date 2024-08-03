@@ -50,10 +50,8 @@ class UserController extends Controller
         return $user;
     }
 
-    public function destroy(User $user)
+    public function destroy($id): JsonResponse
     {
-        $user->delete();
-
-        return $user;
+        return (new UserService($this->user))->delete($id);
     }
 }
