@@ -27,39 +27,6 @@ class UserController extends Controller
         return $user;
     }
 
-    /**
-     * Store a newly created user in storage.
-     *
-     * @return User
-     *
-     * @OA\Post(
-     *      path="/users",
-     *      operationId="storeUser",
-     *      summary="Store a new user",
-     *      tags={"Users"},
-     *      description="Stores a new user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\RequestBody(
-     *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
-     * )
-     */
     public function store(Request $request)
     {
         $data = $request->only([
