@@ -22,11 +22,39 @@ class UserService
 
         $user = $this->user->create($payload);
 
-         return response()->json([
+        return response()->json([
             'meta' => [
                 'code' => Response::HTTP_OK,
                 'status' => 'success',
                 'message' => 'Users created successfully!',
+            ],
+            'data' => [
+                'user' => $user
+            ],
+        ], Response::HTTP_OK);
+    }
+    public function show(?int $id): JsonResponse
+    {
+        $user = $this->user->find($id);
+
+        if (!$user) {
+            return response()->json([
+                'meta' => [
+                    'code' => Response::HTTP_NOT_FOUND,
+                    'status' => 'fails',
+                    'message' => 'User not found!',
+                ],
+                'data' => [
+                    'user' => []
+                ],
+                'access_token' => [],
+            ], Response::HTTP_NOT_FOUND);
+        }
+        return response()->json([
+            'meta' => [
+                'code' => Response::HTTP_OK,
+                'status' => 'success',
+                'message' => 'user successfully!',
             ],
             'data' => [
                 'user' => $user

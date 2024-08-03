@@ -25,9 +25,9 @@ class UserController extends Controller
         return $this->user->get();
     }
 
-    public function show(User $user)
+    public function show($id): JsonResponse
     {
-        return $user;
+        return (new UserService($this->user))->show($id);
     }
 
     public function store(StoreRequest $request): JsonResponse
