@@ -22,41 +22,6 @@ class UserController extends Controller
         return $this->user->get();
     }
 
-    /**
-     * Show a specific user resource
-     *
-     * @return User
-     *
-     * @OA\Get(
-     *      path="/users/{id}",
-     *      operationId="showUser",
-     *      summary="Show a specific user",
-     *      tags={"Users"},
-     *      description="Returns a specific user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\Parameter(
-     *          name="id",
-     *          description="User ID",
-     *          required=true,
-     *          in="path",
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
-     * )
-     */
     public function show(User $user)
     {
         return $user;
