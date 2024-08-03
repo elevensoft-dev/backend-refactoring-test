@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Api\Swagger\User\UserSwagger;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -9,45 +10,13 @@ class UserController extends Controller
 {
     private User $user;
 
+    use UserSwagger;
+
     function __construct(User $user)
     {
         $this->user = $user;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     *
-     * @OA\Get(
-     *      path="/users",
-     *      operationId="getUsersList",
-     *      summary="Get list of users",
-     *      tags={"Users"},
-     *      description="Returns list of users",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(
-     *                  ref="#/components/schemas/User"
-     *              )
-     *          ),
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
-     * )
-     */
     public function index(Request $request)
     {
         return $this->user->get();
@@ -231,4 +200,3 @@ class UserController extends Controller
         return $user;
     }
 }
-

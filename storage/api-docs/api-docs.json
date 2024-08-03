@@ -10,8 +10,8 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8080/api",
-            "description": "API Server"
+            "url": "http://localhost:8001/api",
+            "description": " API SErve"
         }
     ],
     "paths": {
@@ -20,22 +20,17 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get list of users",
+                "summary": "Get List of users",
                 "description": "Returns list of users",
                 "operationId": "getUsersList",
+                "requestBody": {
+                    "content": {
+                        "application/json": {}
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/User"
-                                    }
-                                }
-                            }
-                        }
+                        "description": "Successful operation"
                     },
                     "401": {
                         "description": "Unauthenticated"
@@ -293,13 +288,19 @@
                 "scheme": "https",
                 "flows": {
                     "password": {
-                        "authorizationUrl": "http://localhost:8080/oauth/authorize",
-                        "tokenUrl": "http://localhost:8080/oauth/token",
-                        "refreshUrl": "http://localhost:8080/token/refresh",
+                        "authorizationUrl": "http://localhost:8001/oauth/authorize",
+                        "tokenUrl": "http://localhost:8001/oauth/token",
+                        "refreshUrl": "http://localhost:8001/token/refresh",
                         "scopes": []
                     }
                 }
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "Users",
+            "description": "Users"
+        }
+    ]
 }
