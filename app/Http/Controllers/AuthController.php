@@ -10,7 +10,32 @@ use App\Models\User;
 class AuthController extends Controller
 {
     /**
-     * Login and create token
+     * @OA\Post(
+     *     path="/login",
+     *     summary="Login and get access token",
+     *     tags={"Auth"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","password"},
+     *             @OA\Property(property="email", type="string", format="email"),
+     *             @OA\Property(property="password", type="string", format="password")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful login",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="access_token", type="string"),
+     *             @OA\Property(property="token_type", type="string"),
+     *             @OA\Property(property="user", ref="#/components/schemas/User")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Invalid credentials"
+     *     )
+     * )
      */
     public function login(Request $request)
     {
@@ -40,8 +65,26 @@ class AuthController extends Controller
         }
     }
 
-    /**
-     * Logout (revoke tokens)
+        /**
+     * @OA\Post(
+     *     path="/logout",
+     *     summary="Logout and revoke token",
+     *     tags={"Auth"},
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
+     *     @OA\Response(
+     *         response=200,
+     *         description="Logged out successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error during logout"
+     *     )
+     * )
      */
     public function logout(Request $request)
     {
