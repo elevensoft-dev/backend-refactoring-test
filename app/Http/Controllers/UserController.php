@@ -50,7 +50,15 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->user->get();
+        try {
+            $users = $this->user->get();
+            return response()->json($users);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error listing users.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -90,7 +98,14 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $user;
+        try {
+            return response()->json($user);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error showing user.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -128,13 +143,21 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
         ]);
 
-        return $this->user->create($data);
+        try {
+            $user = $this->user->create($validated);
+            return response()->json($user, 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error creating user.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -178,15 +201,21 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'sometimes|required|string|min:8',
         ]);
 
-        $user->update($data);
-
-        return $user;
+        try {
+            $user->update($validated);
+            return response()->json($user);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error updating user.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -226,9 +255,15 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
-
-        return $user;
+        try {
+            $user->delete();
+            return response()->json(['message' => 'User successfully removed.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error removing user.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
 
