@@ -23,16 +23,117 @@
                 "summary": "Get list of users",
                 "description": "Returns list of users",
                 "operationId": "getUsersList",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filter users by name (partial match).",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "John"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Filter users by email (partial match).",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "john@doe.com"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/User"
-                                    }
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/UserResource"
+                                            }
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users?page=3"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users?page=2",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "nullable": true
+                                                            },
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 11
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -62,7 +163,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/User"
+                                "$ref": "#/components/schemas/StoreUserRequest"
                             }
                         }
                     }
@@ -73,7 +174,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -83,6 +189,12 @@
                     },
                     "403": {
                         "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    },
+                    "500": {
+                        "description": "Error"
                     }
                 },
                 "security": [
@@ -114,7 +226,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "$ref": "#/components/schemas/UserResource"
                                 }
                             }
                         }
@@ -152,7 +264,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/User"
+                                "$ref": "#/components/schemas/UpdateUserRequest"
                             }
                         }
                     }
@@ -163,7 +275,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -173,6 +290,15 @@
                     },
                     "403": {
                         "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Error"
                     }
                 },
                 "security": [
@@ -202,7 +328,13 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -212,6 +344,12 @@
                     },
                     "403": {
                         "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Error"
                     }
                 },
                 "security": [
@@ -224,69 +362,68 @@
     },
     "components": {
         "schemas": {
-            "User": {
-                "title": "User",
-                "description": "User model",
+            "StoreUserRequest": {
+                "title": "Store User",
+                "description": "User object used to store an user.",
                 "properties": {
-                    "id": {
-                        "description": "User id",
-                        "type": "integer",
-                        "example": 1
-                    },
                     "name": {
-                        "description": "User name",
                         "type": "string",
                         "example": "John Doe"
                     },
                     "email": {
-                        "description": "User email",
                         "type": "string",
-                        "example": "example@elevensoft.dev"
-                    },
-                    "email_verified_at": {
-                        "description": "User email verified at",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2021-01-01 00:00:00"
+                        "example": "john@example.com"
                     },
                     "password": {
-                        "description": "User password",
                         "type": "string",
+                        "format": "password",
                         "example": "password"
-                    },
-                    "remember_token": {
-                        "description": "User remember token",
-                        "type": "string",
-                        "example": "token"
-                    },
-                    "created_at": {
-                        "description": "User created at",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2021-01-01 00:00:00"
-                    },
-                    "updated_at": {
-                        "description": "User updated at",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2021-01-01 00:00:00"
                     }
                 },
-                "type": "object",
-                "xml": {
-                    "name": "User"
-                }
+                "type": "object"
+            },
+            "UpdateUserRequest": {
+                "title": "Update User",
+                "description": "User object used to update an user.",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "password"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "title": "User Resource",
+                "description": "User object returned in API responses",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john@example.com"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
             "bearerAuth": {
-                "type": "http",
-                "name": "bearerAuth",
-                "in": "header",
-                "bearerFormat": "JWT",
-                "scheme": "bearer"
-            },
-            "passport": {
                 "type": "oauth2",
                 "description": "Laravel passport oauth2 security.",
                 "in": "header",
@@ -301,5 +438,10 @@
                 }
             }
         }
-    }
+    },
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ]
 }

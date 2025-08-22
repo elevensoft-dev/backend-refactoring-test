@@ -11,6 +11,7 @@ use Illuminate\Routing\Controller as BaseController;
  *      version="1.0.0",
  *      title="E11 - Swagger",
  *      description="L5 Swagger OpenApi description",
+ *
  *      @OA\Contact(
  *          email="developers@elevensoft.dev"
  *      )
