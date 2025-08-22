@@ -12,7 +12,7 @@ class AuthRepository implements IAuthRepository
     {
         $credentials = $request->only(['email', 'password']);
         if (! Auth::attempt($credentials)) {
-            throw new \Exception('Credenciais inválidas');
+            throw new \Exception('Credenciais inválidas', 401);
         }
         /** @var \App\Models\User $user */
         $user = Auth::user();
