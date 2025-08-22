@@ -19,4 +19,8 @@ class AuthController extends Controller
         $this->authRepository->logout();
         return response()->json(['message' => 'Logout realizado com sucesso']);
     }
+    public function me(): JsonResponse
+    {
+        return response()->json(auth()->user());
+    }
 }
