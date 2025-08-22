@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,4 +23,9 @@ Route::prefix('auth')->controller(AuthController::class)->group(function (){
     });
 });
 
-// Route::apiResource('users', UserController::class);
+Route::prefix('users')->controller(UserController::class)->group(function () {
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/list', 'paginateUsers');
+        Route::get('/{id}', 'getUserById');
+    });
+});
