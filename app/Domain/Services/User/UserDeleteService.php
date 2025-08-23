@@ -4,7 +4,7 @@ namespace App\Domain\Services\User;
 
 use App\Core\Repositories\IUserRepository;
 use App\Core\Services\User\IUserDeleteService;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Exceptions\UserNotFoundException;
 
 class UserDeleteService implements IUserDeleteService
 {
@@ -18,7 +18,7 @@ class UserDeleteService implements IUserDeleteService
     {
         $userForDelete = $this->userRepository->findUserById($id);
         if (!$userForDelete) {
-            throw new HttpResponseException(response()->json(['message' => 'Usuario não encotrado'], 404));
+            throw new UserNotFoundException();
         }
         return $this->userRepository->deleteUser($id);
     }
