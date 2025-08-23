@@ -6,6 +6,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
@@ -59,6 +60,12 @@ class Handler extends ExceptionHandler
         }
         if ($e instanceof HttpResponseException) {
             return $e->getResponse();
+        }
+        if ($e instanceof ValidationException) {
+            return response()->json([
+                'message' => 'Erro de validação',
+                'errors' => $e->errors()
+            ], 400);
         }
         return response()->json([
             'message' => 'Erro interno no servidor.',
