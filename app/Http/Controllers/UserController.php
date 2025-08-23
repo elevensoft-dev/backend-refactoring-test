@@ -9,9 +9,7 @@ use App\Core\Services\User\IUserUpdateService;
 use App\Http\Request\UserCreateRequest;
 use App\Http\Request\UserListingRequest;
 use App\Http\Request\UserUpdateRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Js;
 
 class UserController extends Controller
 {
@@ -36,41 +34,21 @@ class UserController extends Controller
     }
     public function createUser(UserCreateRequest $request): JsonResponse
     {
-        try {
-            return response()->json(
-                $this->userCreateService->createUser($request),
-                201
-            );
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 400);
-        }
+        return response()->json(
+            $this->userCreateService->createUser($request),
+            201
+        );
     }
     public function updateUser(UserUpdateRequest $request, int $id): JsonResponse
     {
-        try {
-            return response()->json(
-                $this->userUpdateService->updateUser($id, $request),
-                200
-            );
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 400);
-        }
+        return response()->json(
+            $this->userUpdateService->updateUser($id, $request),
+            200
+        );
     }
     public function deleteUser(int $id): JsonResponse
     {
-        try {
-            return response()->json(
-                $this->userDeleteService->deleteUser($id),
-                204
-            );
-        } catch (HttpResponseException $e) {
-            return response()->json([
-                $e->getResponse()
-            ], 400);
-        }
+        $this->userDeleteService->deleteUser($id);
+        return response()->json(null, 204);
     }
 }

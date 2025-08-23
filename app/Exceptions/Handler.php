@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
@@ -46,6 +47,18 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'message' => $e->getMessage() ?: 'Erro de requisição.'
             ], $e->getStatusCode());
+        }
+        if ($e instanceof InvalidUserDataException) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+        if ($e instanceof UserNotFoundException) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+        if ($e instanceof UserUpdateFailedException) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+        if ($e instanceof HttpResponseException) {
+            return $e->getResponse();
         }
         return response()->json([
             'message' => 'Erro interno no servidor.',
