@@ -27,5 +27,6 @@ Route::prefix('users')->controller(UserController::class)->group(function () {
     Route::middleware('auth:api')->group(function () {
         Route::post('/list', 'paginateUsers');
         Route::get('/{id}', 'getUserById');
+        Route::post('/create', 'createUser');
     });
 });

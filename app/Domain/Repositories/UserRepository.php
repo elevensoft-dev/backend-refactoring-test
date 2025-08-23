@@ -25,6 +25,7 @@ class UserRepository implements IUserRepository
     }
     public function createUser(User $user): User
     {
-        return User::query()->create($user->toArray());
+        $user->save();
+        return $user;
     }
 }
