@@ -11,4 +11,5 @@ interface IUserRepository
     public function paginateUsers(UserListingRequest $request): LengthAwarePaginator;
     public function findUserById(int $id): ?User;
     public function createUser(User $user): User;
+    public function updateUser(User $user, int $id): bool;
 }

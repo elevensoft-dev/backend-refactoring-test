@@ -5,9 +5,11 @@ namespace App\Providers\DependencyInjection;
 use App\Core\Repositories\IUserRepository;
 use App\Core\Services\User\IUserCreateService;
 use App\Core\Services\User\IUserListingService;
+use App\Core\Services\User\IUserUpdateService;
 use App\Domain\Repositories\UserRepository;
 use App\Domain\Services\User\UserCreateService;
 use App\Domain\Services\User\UserListingService;
+use App\Domain\Services\User\UserUpdateService;
 
 class UserDi extends DependencyInjection
 {
@@ -16,6 +18,7 @@ class UserDi extends DependencyInjection
         return [
             [IUserListingService::class, UserListingService::class],
             [IUserCreateService::class, UserCreateService::class],
+            [IUserUpdateService::class, UserUpdateService::class],
         ];
     }
 

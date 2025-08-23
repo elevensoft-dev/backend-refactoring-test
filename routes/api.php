@@ -28,5 +28,6 @@ Route::prefix('users')->controller(UserController::class)->group(function () {
         Route::post('/list', 'paginateUsers');
         Route::get('/{id}', 'getUserById');
         Route::post('/create', 'createUser');
+        Route::put('/update/{id}', 'updateUser');
     });
 });

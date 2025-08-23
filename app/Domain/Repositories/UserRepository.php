@@ -28,4 +28,8 @@ class UserRepository implements IUserRepository
         $user->save();
         return $user;
     }
+    public function updateUser(User $user, int $id): bool
+    {
+        return User::query()->where('id', $id)->update($user->toArray());
+    }
 }
