@@ -467,18 +467,11 @@
         },
         "securitySchemes": {
             "bearerAuth": {
-                "type": "oauth2",
-                "description": "Laravel passport oauth2 security.",
+                "type": "http",
+                "description": "Insira o token no formato: Bearer {seu_token}",
                 "in": "header",
-                "scheme": "https",
-                "flows": {
-                    "password": {
-                        "authorizationUrl": "http://localhost:8080/oauth/authorize",
-                        "tokenUrl": "http://localhost:8080/oauth/token",
-                        "refreshUrl": "http://localhost:8080/token/refresh",
-                        "scopes": []
-                    }
-                }
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             }
         }
     },
