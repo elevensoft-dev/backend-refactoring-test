@@ -17,6 +17,7 @@ class UserListingRequest extends FormRequest
         return [
             'email' => 'email',
             'name' => 'string',
+            'page' => 'integer|min:1',
             'perPage' => 'integer|min:1'
         ];
     }
