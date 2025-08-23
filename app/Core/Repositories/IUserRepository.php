@@ -12,4 +12,5 @@ interface IUserRepository
     public function findUserById(int $id): ?User;
     public function createUser(User $user): User;
     public function updateUser(User $user, int $id): bool;
+    public function deleteUser(int $id): bool;
 }

@@ -29,5 +29,6 @@ Route::prefix('users')->controller(UserController::class)->group(function () {
         Route::get('/{id}', 'getUserById');
         Route::post('/create', 'createUser');
         Route::put('/update/{id}', 'updateUser');
+        Route::delete('/delete/{id}', 'deleteUser');
     });
 });

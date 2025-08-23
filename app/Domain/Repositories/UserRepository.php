@@ -32,4 +32,8 @@ class UserRepository implements IUserRepository
     {
         return User::query()->where('id', $id)->update($user->toArray());
     }
+    public function deleteUser(int $id): bool
+    {
+        return User::query()->where('id', $id)->delete();
+    }
 }
