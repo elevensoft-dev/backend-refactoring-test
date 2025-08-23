@@ -4,9 +4,9 @@ namespace App\Domain\Services\User;
 
 use App\Core\Repositories\IUserRepository;
 use App\Core\Services\User\IUserListingService;
+use App\Exceptions\UserNotFoundException;
 use App\Http\Request\UserListingRequest;
 use App\Http\Resources\UserResource;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserListingService implements IUserListingService
@@ -26,7 +26,7 @@ class UserListingService implements IUserListingService
     {
         $user = $this->userRepository->findUserById($id);
         if (!$user) {
-            throw new HttpResponseException(response()->json(['message' => 'Usuario não encontrado.'], 404));
+            throw new UserNotFoundException();
         }
         return new UserResource($user);
     }

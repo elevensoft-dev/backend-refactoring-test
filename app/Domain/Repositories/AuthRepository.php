@@ -3,6 +3,7 @@
 namespace App\Domain\Repositories;
 
 use App\Core\Repositories\IAuthRepository;
+use App\Exceptions\InvalidCredentialsException;
 use App\Http\Request\LoginAuthRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,7 @@ class AuthRepository implements IAuthRepository
     {
         $credentials = $request->only(['email', 'password']);
         if (! Auth::attempt($credentials)) {
-            throw new HttpResponseException(response()->json(['message' => 'Credenciais inválidas'], 401));
+            throw new InvalidCredentialsException();
         }
         /** @var \App\Models\User $user */
         $user = Auth::user();

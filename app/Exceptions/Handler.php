@@ -67,6 +67,9 @@ class Handler extends ExceptionHandler
                 'errors' => $e->errors()
             ], 400);
         }
+        if ($e instanceof InvalidCredentialsException) {
+            return response()->json(['message' => 'Credenciais inválidas.'], 401);
+        }
         return response()->json([
             'message' => 'Erro interno no servidor.',
             'error'   => config('app.debug') ? $e->getMessage() : null
