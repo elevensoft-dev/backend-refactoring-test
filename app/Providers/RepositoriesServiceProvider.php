@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repository\BaseRepository;
 use App\Repository\BaseRepositoryInterface;
+use App\Repository\User\Contracts\UserRepositoryInterface;
+use App\Repository\User\UserRepository;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,7 +18,12 @@ class RepositoriesServiceProvider extends ServiceProvider implements DeferrableP
     {
         $this->app->bind(
             BaseRepositoryInterface::class,
-            BaseRepository::class
+            BaseRepository::class,
+        );
+
+        $this->app->bind(
+            UserRepositoryInterface::class,
+            UserRepository::class,
         );
     }
 
@@ -33,6 +40,9 @@ class RepositoriesServiceProvider extends ServiceProvider implements DeferrableP
      */
     public function provides(): array
     {
-        return [BaseRepositoryInterface::class];
+        return [
+            BaseRepositoryInterface::class,
+            UserRepositoryInterface::class,
+        ];
     }
 }
