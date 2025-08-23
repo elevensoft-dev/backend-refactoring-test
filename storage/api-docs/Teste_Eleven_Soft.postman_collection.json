@@ -1,0 +1,196 @@
+{
+	"info": {
+		"_postman_id": "404a4521-065a-4b01-8487-0dd28c88ab9d",
+		"name": "Teste",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28191366"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"example@elevensoft.dev\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/api/auth/login",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"example@elevensoft.dev\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/api/auth/logout",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Me",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:8000/api/auth/me",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listagem Usuarios",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/api/users/list",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"users",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Usuario Por id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/api/users/2",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMzI0NGJlYTIwNDU3ZTU3ODQ4ZjEyZTIwZjBkOTIzOTFiMDY4ODNhZGFmZjA0NjIzY2U1NmRkNWRmMjMyZTEyNzBhZjE2NzZiZDQ0MjkzZjUiLCJpYXQiOjE3NTU5NjQwNDUuNTc3NjUxLCJuYmYiOjE3NTU5NjQwNDUuNTc3NjUzLCJleHAiOjE3ODc1MDAwNDUuNTcxMzQxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.QBB4ac220voABvDbnP6SzLdn1agGRP7zymI-X0UWvMd4W_3FOsxXp6wcfXoSmsTTMlRR1U7HptQ3HgCzi2oXWcIwS7TqztBw5DgC_efS0OdXMMtXxD7pJmLRMz_ixp4G2GH7NiIsD-WUriCdQCxiakDP82ORRqivLignewbSyA8MSCJQrlGGa1ydyIpLWCHldD09yuTaTLp_otR2G-uzIxS6GREhwJ8xgxROSioWFIN-zhfKKh4Vj6rnKS6H_dW-CKPjBFc7i_oHBkOpt-M5M69H6Nt4yBYl_EETCDPiwC2oHi5UNISFutytyTlqN94nJc1SexK1uX00gw-mPrLR5cZlI9l3zcyEEMpbc7BfySEG-S8MTA1zl5yiolprOVuHqZrGDjj0LyHeYZFw-YfYiUhCq18f_yObjRIjvqltpy2pKNU9KZGd3ckkmO3BAGzUnxtqLhQ9ewpVww8WOBHMRKX0Ax3Vjh7JPjesz95yg7ewv1STVB5xrTtU-Aa3wcImdxb40tymFc2bjM8I1kIiz3S8dqZtarl8PeMlavHldSocd6Tx3A7U_WyAsLR408UbmV8tXgTz3JMkZe_VRsRkPjIs4ALurVsheDvaSA4fUFXDAEb8akfFta8OhpvGdxL7isBf_qd185Hmp-iWyW4JhTlTDEX35CQeixTo2LG7NNo",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
