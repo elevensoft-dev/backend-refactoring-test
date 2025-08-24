@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @OA\Info(
@@ -33,4 +34,29 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
+
+    protected function successResponse(array $data, string $message = '', int $code = 200): JsonResponse
+    {
+        $message = $message ?: 'Request was successful';
+
+        $responseData = [
+            'status' => 'success',
+            'code' => $code,
+            'message' => $message,
+            'data' => $data,
+        ];
+
+        return response()->json($responseData, $code);
+    }
+
+    protected function errorResponse(string $message, int $code): JsonResponse
+    {
+        $responseData = [
+            'status' => 'error',
+            'code' => $code,
+            'message' => $message,
+        ];
+
+        return response()->json($responseData, $code);
+    }
 }
