@@ -851,7 +851,7 @@
             </div>
         @endif
 
-        <div class="max-w-7xl mx-auto p-6 lg:p-8">
+        <div class="max-w-7xl mx-auto p-6 lg:p-8 bg-red-500">
             <div class="flex justify-center">
                 <svg viewBox="0 0 62 65" fill="none" xmlns="http://www.w3.org/2000/svg"
                     class="h-16 w-auto bg-gray-100 dark:bg-gray-900">
@@ -863,7 +863,7 @@
 
             <div class="mt-16">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                    <a href="{{ route('user.page') }}"
+                    <a href="{{ route('users.index') }}"
                         class="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
                         <div>
                             <div
@@ -875,7 +875,7 @@
                                 </svg>
                             </div>
 
-                            <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Usuários</h2>
+                            <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Listar Usuários</h2>
 
                             <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
                                 Aqui você pode acessar a lista completa de usuários cadastrados no sistema, visualizar
@@ -891,8 +891,7 @@
                                 d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
                         </svg>
                     </a>
-
-                    <a href="api/documentation"
+                    <a href="{{ route('users.create') }}"
                         class="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
                         <div>
                             <div
@@ -904,15 +903,13 @@
                                 </svg>
                             </div>
 
-                            <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Documentaçao Swagger
-                            </h2>
+                            <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Criar Usuário</h2>
 
                             <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                                A documentação Swagger oferece uma visão detalhada e interativa da API do sistema,
-                                permitindo que desenvolvedores explorem os endpoints disponíveis, entendam os
-                                parâmetros necessários e visualizem exemplos de solicitações e respostas. Esta seção é
-                                essencial para quem deseja integrar ou expandir funcionalidades, garantindo uma
-                                compreensão clara de como interagir com a API de forma eficaz.
+                                Utilize esta funcionalidade para adicionar novos usuários ao sistema. Preencha os campos
+                                necessários, como nome, e-mail e senha, e defina as permissões apropriadas para garantir
+                                que cada usuário tenha o nível de acesso adequado às funcionalidades da plataforma.
+                                Mantenha a segurança e a organização do sistema ao gerenciar novos cadastros.
                             </p>
                         </div>
 
@@ -922,7 +919,6 @@
                                 d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
                         </svg>
                     </a>
-
                 </div>
             </div>
 
@@ -938,5 +934,4 @@
         </div>
     </div>
 </body>
-
 </html>

@@ -116,7 +116,6 @@
             font-size: 100%;
             font-weight: inherit;
             line-height: inherit;
-            color: inherit;
             margin: 0;
             padding: 0
         }
@@ -210,7 +209,6 @@
         input::placeholder,
         textarea::placeholder {
             opacity: 1;
-            color: #9ca3af
         }
 
         [role=button],
@@ -600,20 +598,6 @@
             line-height: 1.625
         }
 
-        .text-gray-600 {
-            --tw-text-opacity: 1;
-            color: rgb(75 85 99 / var(--tw-text-opacity))
-        }
-
-        .text-gray-900 {
-            --tw-text-opacity: 1;
-            color: rgb(17 24 39 / var(--tw-text-opacity))
-        }
-
-        .text-gray-500 {
-            --tw-text-opacity: 1;
-            color: rgb(107 114 128 / var(--tw-text-opacity))
-        }
 
         .underline {
             -webkit-text-decoration-line: underline;
@@ -622,7 +606,7 @@
 
         .antialiased {
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale
+            color -moz-osx-font-smoothing: grayscale
         }
 
         .shadow-2xl {
@@ -647,10 +631,6 @@
             background-color: rgb(239 68 68 / var(--tw-bg-opacity))
         }
 
-        .selection\:text-white *::selection {
-            --tw-text-opacity: 1;
-            color: rgb(255 255 255 / var(--tw-text-opacity))
-        }
 
         .selection\:bg-red-500::selection {
             --tw-bg-opacity: 1;
@@ -696,6 +676,13 @@
             z-index: 10
         }
 
+        #users-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+
         @media (prefers-reduced-motion: no-preference) {
             .motion-safe\:hover\:scale-\[1\.01\]:hover {
                 --tw-scale-x: 1.01;
@@ -730,16 +717,6 @@
                 stroke: #4b5563
             }
 
-            .dark\:text-gray-400 {
-                --tw-text-opacity: 1;
-                color: rgb(156 163 175 / var(--tw-text-opacity))
-            }
-
-            .dark\:text-white {
-                --tw-text-opacity: 1;
-                color: rgb(255 255 255 / var(--tw-text-opacity))
-            }
-
             .dark\:shadow-none {
                 --tw-shadow: 0 0 #0000;
                 --tw-shadow-colored: 0 0 #0000;
@@ -760,10 +737,6 @@
                 --tw-ring-color: rgb(255 255 255 / 0.05)
             }
 
-            .dark\:hover\:text-white:hover {
-                --tw-text-opacity: 1;
-                color: rgb(255 255 255 / var(--tw-text-opacity))
-            }
 
             .group:hover .dark\:group-hover\:stroke-gray-400 {
                 stroke: #9ca3af
@@ -816,6 +789,10 @@
             .md\:grid-cols-2 {
                 grid-template-columns: repeat(2, minmax(0, 1fr))
             }
+
+            #users-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (min-width: 1024px) {
@@ -825,6 +802,11 @@
 
             .lg\:p-8 {
                 padding: 2rem
+            }
+
+            #users-list {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 2rem;
             }
         }
     </style>
@@ -861,82 +843,114 @@
                 </svg>
             </div>
 
-            <div class="mt-16">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                    <a href="{{ route('user.page') }}"
-                        class="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
-                        <div>
-                            <div
-                                class="h-16 w-16 bg-red-50 dark:bg-red-800/20 flex items-center justify-center rounded-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" class="w-7 h-7 stroke-red-500">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
-                                </svg>
-                            </div>
-
-                            <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Usuários</h2>
-
-                            <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                                Aqui você pode acessar a lista completa de usuários cadastrados no sistema, visualizar
-                                detalhes de cada perfil, editar informações quando necessário e gerenciar permissões de
-                                acesso. Utilize esta seção para manter os dados atualizados e garantir que cada usuário
-                                tenha as permissões corretas dentro da plataforma.
-                            </p>
-                        </div>
-
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            class="self-center shrink-0 stroke-red-500 w-6 h-6 mx-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-                        </svg>
-                    </a>
-
-                    <a href="api/documentation"
-                        class="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
-                        <div>
-                            <div
-                                class="h-16 w-16 bg-red-50 dark:bg-red-800/20 flex items-center justify-center rounded-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" class="w-7 h-7 stroke-red-500">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
-                                </svg>
-                            </div>
-
-                            <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Documentaçao Swagger
-                            </h2>
-
-                            <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                                A documentação Swagger oferece uma visão detalhada e interativa da API do sistema,
-                                permitindo que desenvolvedores explorem os endpoints disponíveis, entendam os
-                                parâmetros necessários e visualizem exemplos de solicitações e respostas. Esta seção é
-                                essencial para quem deseja integrar ou expandir funcionalidades, garantindo uma
-                                compreensão clara de como interagir com a API de forma eficaz.
-                            </p>
-                        </div>
-
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            class="self-center shrink-0 stroke-red-500 w-6 h-6 mx-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-                        </svg>
-                    </a>
-
-                </div>
-            </div>
-
-            <div class="flex justify-center mt-16 px-0 sm:items-center sm:justify-between">
-                <div class="text-center text-sm sm:text-left">
-                    &nbsp;
+            <div class="mt-16 ">
+                <div id="users-list" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 lg:gap-8">
+                    <div>Carregando usuários...</div>
                 </div>
 
-                <div class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-right sm:ml-0">
-                    Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+                <div class="flex justify-center mt-16 px-0 sm:items-center sm:justify-between">
+                    <div class="text-center text-sm sm:text-right sm:ml-0" style="color: #ccc;">
+                        Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+                    </div>
                 </div>
             </div>
         </div>
+
+
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const usersList = document.getElementById('users-list');
+            usersList.innerHTML = '<div style="color:#FF2D20">Carregando usuários...</div>';
+            fetch('{{ route("api.users.index") }}')
+                .then(response => response.json())
+                .then(data => {
+                    if (!Array.isArray(data)) {
+                        usersList.innerHTML = '<span style="color:red">Formato de dados inválido</span>';
+                        return;
+                    }
+                    fetch('{{ route("users.render") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ users: data })
+                    })
+                        .then(response => response.text())
+                        .then(html => {
+                            usersList.innerHTML = html;
+                        });
+                });
+                // Funções globais para editar e excluir usuário
+                window.startEditUser = function (id) {
+                    document.getElementById('user-name-' + id).style.display = 'none';
+                    document.getElementById('user-email-' + id).style.display = 'none';
+                    document.getElementById('edit-name-' + id).style.display = '';
+                    document.getElementById('edit-email-' + id).style.display = '';
+                    document.getElementById('save-edit-' + id).style.display = '';
+                    document.getElementById('cancel-edit-' + id).style.display = '';
+                };
+                window.cancelEditUser = function (id) {
+                    document.getElementById('user-name-' + id).style.display = '';
+                    document.getElementById('user-email-' + id).style.display = '';
+                    document.getElementById('edit-name-' + id).style.display = 'none';
+                    document.getElementById('edit-email-' + id).style.display = 'none';
+                    document.getElementById('save-edit-' + id).style.display = 'none';
+                    document.getElementById('cancel-edit-' + id).style.display = 'none';
+                };
+                window.saveEditUser = function (id) {
+                    const name = document.getElementById('edit-name-' + id).value;
+                    const email = document.getElementById('edit-email-' + id).value;
+                    fetch(`{{ url('api/users') }}/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name, email })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                console.error('Status:', response.status);
+                                console.error('Status Text:', response.statusText);
+                                return response.text().then(text => {
+                                    throw new Error(`Erro ${response.status}: ${text}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(() => location.reload())
+                        .catch(err => {
+                            console.error('Erro completo:', err);
+                            alert('Erro ao atualizar usuário: ' + err.message);
+                        });
+                };
+                window.deleteUser = function (id) {
+                    if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+                    fetch(`{{ url('api/users') }}/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                console.error('Status:', response.status);
+                                console.error('Status Text:', response.statusText);
+                                return response.text().then(text => {
+                                    throw new Error(`Erro ${response.status}: ${text}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(() => location.reload())
+                        .catch(err => {
+                            console.error('Erro completo:', err);
+                            alert('Erro ao excluir usuário: ' + err.message);
+                        });
+                };
+        });
+    </script>
 </body>
 
 </html>

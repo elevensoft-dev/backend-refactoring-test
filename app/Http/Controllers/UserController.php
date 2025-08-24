@@ -1,234 +1,233 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Contracts\Services\UserServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 
+/**
+ * @OA\Tag(
+ *     name="Users",
+ *     description="API Endpoints for User management"
+ * )
+ */
 class UserController extends Controller
 {
-    private User $user;
+    protected $userService;
 
-    function __construct(User $user)
+    public function __construct(UserServiceInterface $userService)
     {
-        $this->user = $user;
+        $this->userService = $userService;
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     *
      * @OA\Get(
-     *      path="/users",
-     *      operationId="getUsersList",
-     *      summary="Get list of users",
-     *      tags={"Users"},
-     *      description="Returns list of users",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(
-     *                  ref="#/components/schemas/User"
-     *              )
-     *          ),
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *     path="/users",
+     *     operationId="getUsersList",
+     *     tags={"Users"},
+     *     summary="Get list of users",
+     *     description="Returns list of users",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/User")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     security={{"bearerAuth": {}}}
      * )
      */
-    public function index(Request $request)
+    public function index()
     {
-        return $this->user->get();
+        return response()->json($this->userService->getAllUsers(), 200);
     }
 
     /**
-     * Show a specific user resource
-     *
-     * @return User
-     *
      * @OA\Get(
-     *      path="/users/{id}",
-     *      operationId="showUser",
-     *      summary="Show a specific user",
-     *      tags={"Users"},
-     *      description="Returns a specific user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\Parameter(
-     *          name="id",
-     *          description="User ID",
-     *          required=true,
-     *          in="path",
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *     path="/users/{id}",
+     *     operationId="showUser",
+     *     tags={"Users"},
+     *     summary="Show a specific user",
+     *     description="Returns a specific user",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="User ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     security={{"bearerAuth": {}}}
      * )
      */
-    public function show(User $user)
+    public function show($id)
     {
-        return $user;
+        $user = $this->userService->getUserById($id);
+        return $user
+            ? response()->json($user, 200)
+            : response()->json(['message' => 'User not found'], 404);
     }
 
     /**
-     * Store a newly created user in storage.
-     *
-     * @return User
-     *
      * @OA\Post(
-     *      path="/users",
-     *      operationId="storeUser",
-     *      summary="Store a new user",
-     *      tags={"Users"},
-     *      description="Stores a new user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\RequestBody(
-     *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *     path="/users",
+     *     operationId="storeUser",
+     *     tags={"Users"},
+     *     summary="Store a new user",
+     *     description="Stores a new user",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     security={{"bearerAuth": {}}}
      * )
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
-
-        return $this->user->create($data);
+        $user = $this->userService->createUser($request->validated());
+        return response()->json($user, 201);
     }
 
     /**
-     * Update a specific user resource
-     *
-     * @return User
-     *
      * @OA\Put(
-     *      path="/users/{id}",
-     *      operationId="updateUser",
-     *      summary="Update a specific user",
-     *      tags={"Users"},
-     *      description="Updates a specific user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\Parameter(
-     *          name="id",
-     *          description="User ID",
-     *          required=true,
-     *          in="path",
-     *      ),
-     *      @OA\RequestBody(
-     *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *     path="/users/{id}",
+     *     operationId="updateUser",
+     *     tags={"Users"},
+     *     summary="Update a specific user",
+     *     description="Updates a specific user",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="User ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     security={{"bearerAuth": {}}}
      * )
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, $id)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
 
-        $user->update($data);
+        $user = $this->userService->updateUser($id, $request->validated());
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        return response()->json($user, 200);
 
-        return $user;
     }
 
     /**
-     * Remove a specific user resource
-     *
-     * @return User
-     *
      * @OA\Delete(
-     *      path="/users/{id}",
-     *      operationId="deleteUser",
-     *      summary="Delete a specific user",
-     *      tags={"Users"},
-     *      description="Deletes a specific user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\Parameter(
-     *          name="id",
-     *          description="User ID",
-     *          required=true,
-     *          in="path",
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *     path="/users/{id}",
+     *     operationId="deleteUser",
+     *     tags={"Users"},
+     *     summary="Delete a specific user",
+     *     description="Deletes a specific user",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="User ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User deleted successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="User deleted")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     security={{"bearerAuth": {}}}
      * )
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        $user->delete();
-
-        return $user;
+        $deleted = $this->userService->deleteUser($id);
+        return $deleted
+            ? response()->json(['message' => 'User deleted'], 200)
+            : response()->json(['message' => 'User not found'], 404);
     }
 }
 

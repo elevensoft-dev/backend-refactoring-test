@@ -68,8 +68,8 @@
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Successful operation",
+                    "201": {
+                        "description": "User created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -77,6 +77,9 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Validation error"
                     },
                     "401": {
                         "description": "Unauthenticated"
@@ -105,7 +108,10 @@
                         "name": "id",
                         "in": "path",
                         "description": "User ID",
-                        "required": true
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -118,6 +124,9 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "User not found"
                     },
                     "401": {
                         "description": "Unauthenticated"
@@ -144,7 +153,10 @@
                         "name": "id",
                         "in": "path",
                         "description": "User ID",
-                        "required": true
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "requestBody": {
@@ -159,7 +171,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "User updated successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -167,6 +179,12 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     },
                     "401": {
                         "description": "Unauthenticated"
@@ -193,19 +211,31 @@
                         "name": "id",
                         "in": "path",
                         "description": "User ID",
-                        "required": true
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "User deleted successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User deleted"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "User not found"
                     },
                     "401": {
                         "description": "Unauthenticated"
@@ -301,5 +331,11 @@
                 }
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "Users",
+            "description": "API Endpoints for User management"
+        }
+    ]
 }
