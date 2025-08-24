@@ -2,233 +2,175 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Core\Services\User\IUserCreateService;
+use App\Core\Services\User\IUserDeleteService;
+use App\Core\Services\User\IUserListingService;
+use App\Core\Services\User\IUserUpdateService;
+use App\Http\Request\UserCreateRequest;
+use App\Http\Request\UserListingRequest;
+use App\Http\Request\UserUpdateRequest;
+use Illuminate\Http\JsonResponse;
 
+/**
+ * @OA\Tag(
+ *     name="Users",
+ *     description="Operações de gerenciamento de usuários"
+ * )
+ */
 class UserController extends Controller
 {
-    private User $user;
-
-    function __construct(User $user)
-    {
-        $this->user = $user;
-    }
-
+    public function __construct(
+        private IUserListingService $userListingService,
+        private IUserCreateService $userCreateService,
+        private IUserUpdateService $userUpdateService,
+        private IUserDeleteService $userDeleteService,
+    ) {}
     /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     *
-     * @OA\Get(
-     *      path="/users",
-     *      operationId="getUsersList",
-     *      summary="Get list of users",
-     *      tags={"Users"},
-     *      description="Returns list of users",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(
-     *                  ref="#/components/schemas/User"
-     *              )
-     *          ),
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
-     * )
-     */
-    public function index(Request $request)
-    {
-        return $this->user->get();
-    }
-
-    /**
-     * Show a specific user resource
-     *
-     * @return User
-     *
-     * @OA\Get(
-     *      path="/users/{id}",
-     *      operationId="showUser",
-     *      summary="Show a specific user",
-     *      tags={"Users"},
-     *      description="Returns a specific user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\Parameter(
-     *          name="id",
-     *          description="User ID",
-     *          required=true,
-     *          in="path",
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
-     * )
-     */
-    public function show(User $user)
-    {
-        return $user;
-    }
-
-    /**
-     * Store a newly created user in storage.
-     *
-     * @return User
-     *
      * @OA\Post(
-     *      path="/users",
-     *      operationId="storeUser",
-     *      summary="Store a new user",
-     *      tags={"Users"},
-     *      description="Stores a new user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\RequestBody(
-     *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *     path="/api/users/list",
+     *     tags={"Users"},
+     *     summary="Lista usuários com paginação",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="email", type="string", format="email"),
+     *             @OA\Property(property="page", type="integer", example=1),
+     *             @OA\Property(property="perPage", type="integer", example=15)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de usuários",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/UserResource"))
+     *     ),
+     *     @OA\Response(response=401, description="Não autenticado")
      * )
      */
-    public function store(Request $request)
+    public function paginateUsers(UserListingRequest $request): JsonResponse
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
-
-        return $this->user->create($data);
+        return response()->json(
+            $this->userListingService->paginateUsers($request)
+        );
     }
-
     /**
-     * Update a specific user resource
-     *
-     * @return User
-     *
+     * @OA\Get(
+     *     path="/api/users/{id}",
+     *     tags={"Users"},
+     *     summary="Retorna usuário por ID",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Usuário retornado",
+     *         @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *     ),
+     *     @OA\Response(response=404, description="Usuário não encontrado"),
+     *     @OA\Response(response=401, description="Não autenticado")
+     * )
+     */
+    public function getUserById(int $id): JsonResponse
+    {
+        return response()->json(
+            $this->userListingService->getUserById($id)
+        );
+    }
+    /**
+     * @OA\Post(
+     *     path="/api/users",
+     *     tags={"Users"},
+     *     summary="Cria um novo usuário",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name","email","password","passwordConfirmation"},
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="email", type="string", format="email"),
+     *             @OA\Property(property="password", type="string", format="password"),
+     *             @OA\Property(property="passwordConfirmation", type="string", format="password")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Usuário criado",
+     *         @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *     ),
+     *     @OA\Response(response=400, description="Dados inválidos"),
+     *     @OA\Response(response=409, description="Email já em uso"),
+     *     @OA\Response(response=401, description="Não autenticado")
+     * )
+     */
+    public function createUser(UserCreateRequest $request): JsonResponse
+    {
+        return response()->json(
+            $this->userCreateService->createUser($request),
+            201
+        );
+    }
+    /**
      * @OA\Put(
-     *      path="/users/{id}",
-     *      operationId="updateUser",
-     *      summary="Update a specific user",
-     *      tags={"Users"},
-     *      description="Updates a specific user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\Parameter(
-     *          name="id",
-     *          description="User ID",
-     *          required=true,
-     *          in="path",
-     *      ),
-     *      @OA\RequestBody(
-     *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *     path="/api/users/{id}",
+     *     tags={"Users"},
+     *     summary="Atualiza usuário por ID",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="password", type="string", format="password"),
+     *             @OA\Property(property="passwordConfirmation", type="string", format="password")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Usuário atualizado",
+     *         @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *     ),
+     *     @OA\Response(response=404, description="Usuário não encontrado"),
+     *     @OA\Response(response=400, description="Dados inválidos"),
+     *     @OA\Response(response=401, description="Não autenticado")
      * )
      */
-    public function update(Request $request, User $user)
+    public function updateUser(UserUpdateRequest $request, int $id): JsonResponse
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
-
-        $user->update($data);
-
-        return $user;
+        return response()->json(
+            $this->userUpdateService->updateUser($id, $request),
+            200
+        );
     }
-
     /**
-     * Remove a specific user resource
-     *
-     * @return User
-     *
      * @OA\Delete(
-     *      path="/users/{id}",
-     *      operationId="deleteUser",
-     *      summary="Delete a specific user",
-     *      tags={"Users"},
-     *      description="Deletes a specific user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
-     *      @OA\Parameter(
-     *          name="id",
-     *          description="User ID",
-     *          required=true,
-     *          in="path",
-     *      ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *     path="/api/users/{id}",
+     *     tags={"Users"},
+     *     summary="Deleta usuário por ID",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=204, description="Usuário deletado com sucesso"),
+     *     @OA\Response(response=404, description="Usuário não encontrado"),
+     *     @OA\Response(response=401, description="Não autenticado")
      * )
      */
-    public function destroy(User $user)
+    public function deleteUser(int $id): JsonResponse
     {
-        $user->delete();
-
-        return $user;
+        $this->userDeleteService->deleteUser($id);
+        return response()->json(null, 204);
     }
 }
-

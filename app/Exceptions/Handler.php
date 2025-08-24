@@ -2,7 +2,12 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +31,48 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof AuthenticationException) {
+            return response()->json([
+                'message' => 'Não autenticado.'
+            ], 401);
+        }
+        if ($e instanceof ModelNotFoundException) {
+            return response()->json([
+                'message' => 'Recurso não encontrado.'
+            ], 404);
+        }
+        if ($e instanceof HttpException) {
+            return response()->json([
+                'message' => $e->getMessage() ?: 'Erro de requisição.'
+            ], $e->getStatusCode());
+        }
+        if ($e instanceof InvalidUserDataException) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+        if ($e instanceof UserNotFoundException) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+        if ($e instanceof UserUpdateFailedException) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+        if ($e instanceof HttpResponseException) {
+            return $e->getResponse();
+        }
+        if ($e instanceof ValidationException) {
+            return response()->json([
+                'message' => 'Erro de validação',
+                'errors' => $e->errors()
+            ], 400);
+        }
+        if ($e instanceof InvalidCredentialsException) {
+            return response()->json(['message' => 'Credenciais inválidas.'], 401);
+        }
+        return response()->json([
+            'message' => 'Erro interno no servidor.',
+            'error'   => config('app.debug') ? $e->getMessage() : null
+        ], 500);
     }
 }
