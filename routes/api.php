@@ -20,10 +20,12 @@ use Illuminate\Support\Facades\Route;
 */
 //Route::apiResource('users', UserController::class);
 
-Route::group(['prefix'=> 'users'], function (): void {
-    Route::get('/', AllUsersController::class);
-    Route::post('/', CreateNewUserController::class);
-    Route::get('/{id}', UserByIdController::class);
-    Route::patch('/{id}', UpdateUserController::class);
-    Route::delete('/{id}', DeleteUserController::class);
+Route::group(['middleware' => '', 'prefix'=> ''], function (): void {
+    Route::group(['prefix'=> 'users'], function (): void {
+        Route::get('/', AllUsersController::class);
+        Route::post('/', CreateNewUserController::class);
+        Route::get('/{id}', UserByIdController::class);
+        Route::patch('/{id}', UpdateUserController::class);
+        Route::delete('/{id}', DeleteUserController::class);
+    });
 });
