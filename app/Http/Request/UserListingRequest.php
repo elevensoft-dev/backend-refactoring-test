@@ -15,7 +15,7 @@ class UserListingRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'email',
+            'email' => 'string',
             'name' => 'string',
             'page' => 'integer|min:1',
             'perPage' => 'integer|min:1'
