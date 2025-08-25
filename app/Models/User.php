@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -19,7 +21,9 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+
+    const PER_PAGE = 15; 
 
     /**
      * The attributes that are mass assignable.
@@ -109,28 +113,14 @@ class User extends Authenticatable
     private Carbon $email_verified_at;
 
     /**
-     * User password
-     *
-     * @OA\Property(
-     *      property="password",
-     *      description="User password",
-     *      type="string",
-     *      example="password"
-     * )
+     * User password (not exposed in API)
      *
      * @var string
      */
     private string $password;
 
     /**
-     * User remember token
-     *
-     * @OA\Property(
-     *      property="remember_token",
-     *      description="User remember token",
-     *      type="string",
-     *      example="token"
-     * )
+     * User remember token (not exposed in API)
      *
      * @var string
      */
@@ -163,5 +153,27 @@ class User extends Authenticatable
      * @var Carbon
      */
     private Carbon $updated_at;
-}
 
+    /**
+     * User deleted at (soft delete timestamp)
+     *
+     * @OA\Property(
+     *      property="deleted_at",
+     *      description="User soft delete timestamp",
+     *      type="datetime",
+     *      nullable=true,
+     *      example="2021-01-01 00:00:00"
+     * )
+     *
+     * @var Carbon|null
+     */
+    private ?Carbon $deleted_at;
+
+    public function searchFilter(Builder $builder, string $search): Builder
+    {
+        return $builder->where(function ($query) use ($search) {
+            $query->where('name', 'LIKE', "%{$search}%")
+              ->orWhere('email', 'LIKE', "%{$search}%");
+        });
+    }
+}
