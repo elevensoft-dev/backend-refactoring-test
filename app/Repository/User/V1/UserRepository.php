@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repository\User;
+namespace App\Repository\User\V1;
 
 use App\Models\User;
 use App\Repository\BaseRepository;
-use App\Repository\User\Contracts\UserRepositoryInterface;
+use App\Repository\User\V1\Contracts\UserRepositoryInterface;
 
 /**
  * Inherits all crud methods from BaseRepository.

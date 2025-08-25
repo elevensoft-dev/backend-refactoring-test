@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\User\Contracts;
+namespace App\Service\User\V1\Contracts;
 
 use App\Models\User;
 use Illuminate\Support\Collection;

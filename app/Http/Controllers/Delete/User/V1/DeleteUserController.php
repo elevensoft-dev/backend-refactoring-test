@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Delete\User;
+namespace App\Http\Controllers\Delete\User\V1;
 
 use App\Http\Controllers\Controller;
-use App\Service\User\Contracts\UserServiceInterface;
+use App\Service\User\V1\Contracts\UserServiceInterface;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;

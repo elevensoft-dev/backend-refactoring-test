@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Service\User;
+namespace App\Service\User\V1;
 
 use App\Models\User;
-use App\Repository\User\Contracts\UserRepositoryInterface;
-use App\Service\User\Contracts\UserServiceInterface;
+use App\Repository\User\V1\Contracts\UserRepositoryInterface;
+use App\Service\User\V1\Contracts\UserServiceInterface;
 use Illuminate\Support\Collection;
 
 class UserService implements UserServiceInterface

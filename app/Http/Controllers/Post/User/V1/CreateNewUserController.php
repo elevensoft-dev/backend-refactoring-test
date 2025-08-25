@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Post\User;
+namespace App\Http\Controllers\Post\User\V1;
 
 use App\Http\Controllers\Controller;
-use App\Service\User\Contracts\UserServiceInterface;
+use App\Service\User\V1\Contracts\UserServiceInterface;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;

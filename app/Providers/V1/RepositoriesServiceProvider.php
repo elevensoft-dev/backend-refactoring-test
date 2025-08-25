@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Providers;
+namespace App\Providers\V1;
 
 use App\Repository\BaseRepository;
 use App\Repository\BaseRepositoryInterface;
-use App\Repository\User\Contracts\UserRepositoryInterface;
-use App\Repository\User\UserRepository;
+use App\Repository\User\V1\Contracts\UserRepositoryInterface;
+use App\Repository\User\V1\UserRepository;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 

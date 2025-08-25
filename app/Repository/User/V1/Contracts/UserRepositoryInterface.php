@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\User\Contracts;
+namespace App\Repository\User\V1\Contracts;
 
 use App\Repository\BaseRepositoryInterface;
 

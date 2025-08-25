@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Providers;
+namespace App\Providers\V1;
 
-use App\Service\User\Contracts\UserServiceInterface;
-use App\Service\User\UserService;
+use App\Service\User\V1\Contracts\UserServiceInterface;
+use App\Service\User\V1\UserService;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
