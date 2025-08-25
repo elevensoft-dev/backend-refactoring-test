@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\UserService;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
-    private User $user;
+    protected $userService;
 
-    function __construct(User $user)
+    public function __construct(UserService $userService)
     {
-        $this->user = $user;
+        $this->userService = $userService;
     }
 
     /**
@@ -48,16 +52,16 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function index(Request $request)
+    public function index()
     {
         try {
-            $users = $this->user->get();
+            $users = $this->userService->getAllUsers();
             return response()->json($users);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error listing users.',
                 'error' => $e->getMessage(),
-            ], 500);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -96,15 +100,16 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function show(User $user)
+    public function show($id)
     {
         try {
+            $user = $this->userService->findUser($id);
             return response()->json($user);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error showing user.',
                 'error' => $e->getMessage(),
-            ], 500);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -141,22 +146,17 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-        ]);
-
         try {
-            $user = $this->user->create($validated);
-            return response()->json($user, 201);
+            $validated = $request->validated();
+            $user = $this->userService->createUser($validated);
+            return response()->json($user, Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error creating user.',
                 'error' => $e->getMessage(),
-            ], 500);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -199,22 +199,17 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, $id)
     {
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'sometimes|required|string|min:8',
-        ]);
-
         try {
-            $user->update($validated);
+            $validated = $request->validated();
+            $user = $this->userService->updateUser($id, $validated);
             return response()->json($user);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error updating user.',
                 'error' => $e->getMessage(),
-            ], 500);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -253,16 +248,16 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
         try {
-            $user->delete();
+            $this->userService->deleteUser($id);
             return response()->json(['message' => 'User successfully removed.']);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error removing user.',
                 'error' => $e->getMessage(),
-            ], 500);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

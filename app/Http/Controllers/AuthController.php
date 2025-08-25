@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AuthService;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
+    protected $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
     /**
      * @OA\Post(
      *     path="/login",
@@ -37,31 +44,26 @@ class AuthController extends Controller
      *     )
      * )
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         try {
-            $request->validate([
-                'email' => 'required|email',
-                'password' => 'required|string',
-            ]);
+            $validated = $request->validated();
 
-            $user = User::where('email', $request->email)->first();
-            if (!$user || !Hash::check($request->password, $user->password)) {
-                return response()->json(['message' => 'Invalid credentials'], 401);
+            $result = $this->authService->attemptLogin($validated['email'], $validated['password']);
+            if (!$result) {
+                return response()->json(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
             }
 
-            $token = $user->createToken('api-token')->plainTextToken;
-
             return response()->json([
-                'access_token' => $token,
+                'user' => $result['user'],
+                'access_token' => $result['token'],
                 'token_type' => 'Bearer',
-                'user' => $user,
-            ]);
+            ], Response::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error during login.',
                 'error' => $e->getMessage(),
-            ], 500);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -89,13 +91,13 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try {
-            $request->user()->currentAccessToken()->delete();
-            return response()->json(['message' => 'Logged out successfully']);
+            $this->authService->logout($request->user());
+            return response()->json(['message' => 'Logged out successfully'], Response::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error during logout.',
                 'error' => $e->getMessage(),
-            ], 500);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
