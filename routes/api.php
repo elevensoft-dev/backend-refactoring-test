@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 //Route::apiResource('users', UserController::class);
 
-Route::group(['middleware' => '', 'prefix'=> ''], function (): void {
+Route::group(['prefix'=> ''], function (): void {
     Route::group(['prefix'=> 'users'], function (): void {
         Route::get('/', AllUsersController::class);
         Route::post('/', CreateNewUserController::class);
