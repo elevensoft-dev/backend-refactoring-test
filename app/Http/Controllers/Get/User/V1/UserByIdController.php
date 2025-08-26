@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Get\User\V1;
 
 use App\Http\Controllers\Controller;
 use App\Service\User\V1\Contracts\UserServiceInterface;
-use Exception;
-use Illuminate\Support\Facades\Log;
+use App\Traits\SuccessResponsesTrait;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UserByIdController extends Controller
 {
+    use SuccessResponsesTrait;
+
     private UserServiceInterface $userService;
 
     public function __construct(UserServiceInterface $userService)
@@ -20,18 +20,8 @@ class UserByIdController extends Controller
 
     public function __invoke(int $id): Response
     {
-        try {
-            $user = $this->userService->getUserById($id)->toArray();
+        $user = $this->userService->getUserById($id)->toArray();
 
-            return $this->successResponse($user, 'User retrieved successfully');
-        } catch (HttpException $e) {
-            Log::error($e->__tostring());
-
-            return $this->errorResponse('Error on user retrieve', $e->getCode());
-        } catch (Exception $e) {
-            Log::error($e->__tostring());
-
-            return $this->errorResponse('Unexpected error', Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->jsonSuccessResponse($user, 'User retrieved successfully');
     }
 }
