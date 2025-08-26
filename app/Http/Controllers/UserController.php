@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\UserService;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
-    private User $user;
+    protected $userService;
 
-    function __construct(User $user)
+    public function __construct(UserService $userService)
     {
-        $this->user = $user;
+        $this->userService = $userService;
     }
 
     /**
@@ -48,9 +52,17 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function index(Request $request)
+    public function index()
     {
-        return $this->user->get();
+        try {
+            $users = $this->userService->getAllUsers();
+            return response()->json($users);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error listing users.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -88,9 +100,17 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function show(User $user)
+    public function show($id)
     {
-        return $user;
+        try {
+            $user = $this->userService->findUser($id);
+            return response()->json($user);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error showing user.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -126,15 +146,18 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
-
-        return $this->user->create($data);
+        try {
+            $validated = $request->validated();
+            $user = $this->userService->createUser($validated);
+            return response()->json($user, Response::HTTP_CREATED);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error creating user.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -176,17 +199,18 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, $id)
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
-
-        $user->update($data);
-
-        return $user;
+        try {
+            $validated = $request->validated();
+            $user = $this->userService->updateUser($id, $validated);
+            return response()->json($user);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error updating user.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -224,11 +248,17 @@ class UserController extends Controller
      *      )
      * )
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        $user->delete();
-
-        return $user;
+        try {
+            $this->userService->deleteUser($id);
+            return response()->json(['message' => 'User successfully removed.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error removing user.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
 
