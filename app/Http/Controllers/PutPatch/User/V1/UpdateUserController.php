@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\PutPatch\User\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateUserRequest;
 use App\Service\User\V1\Contracts\UserServiceInterface;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -19,10 +19,10 @@ class UpdateUserController extends Controller
         $this->userService = $userService;
     }
 
-    public function __invoke($id, Request $request): Response
+    public function __invoke(int $id, UpdateUserRequest $request): Response
     {
         try {
-            $data = $request->only(['name', 'email', 'password']);
+            $data = $request->validated();
 
             $user = $this->userService->updateUser($data, $id)->toArray();
 
