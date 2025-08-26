@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Get\User\V1;
 use App\Http\Controllers\Controller;
 use App\Service\User\V1\Contracts\UserServiceInterface;
 use App\Traits\SuccessResponsesTrait;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\JsonResponse;
 
 class UserByIdController extends Controller
 {
@@ -18,7 +18,7 @@ class UserByIdController extends Controller
         $this->userService = $userService;
     }
 
-    public function __invoke(int $id): Response
+    public function __invoke(int $id): JsonResponse
     {
         $user = $this->userService->getUserById($id)->toArray();
 

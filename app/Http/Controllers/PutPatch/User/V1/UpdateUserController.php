@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateUserRequest;
 use App\Service\User\V1\Contracts\UserServiceInterface;
 use App\Traits\SuccessResponsesTrait;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\JsonResponse;
 
 class UpdateUserController extends Controller
 {
@@ -19,7 +19,7 @@ class UpdateUserController extends Controller
         $this->userService = $userService;
     }
 
-    public function __invoke(int $id, UpdateUserRequest $request): Response
+    public function __invoke(int $id, UpdateUserRequest $request): JsonResponse
     {
         $data = $request->validated();
 

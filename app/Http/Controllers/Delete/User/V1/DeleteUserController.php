@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Delete\User\V1;
 use App\Http\Controllers\Controller;
 use App\Service\User\V1\Contracts\UserServiceInterface;
 use App\Traits\SuccessResponsesTrait;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\JsonResponse;
 
 class DeleteUserController extends Controller
 {
@@ -18,7 +18,7 @@ class DeleteUserController extends Controller
         $this->userService = $userService;
     }
 
-    public function __invoke(int $userId): Response
+    public function __invoke(int $userId): JsonResponse
     {
         $user = $this->userService->deleteUser($userId)->toArray();
 
