@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Delete\User\V1;
+namespace App\Http\Controllers\User\V1;
 
 use App\Http\Controllers\Controller;
 use App\Service\User\V1\Contracts\UserServiceInterface;
@@ -18,10 +18,10 @@ class DeleteUserController extends Controller
         $this->userService = $userService;
     }
 
-    public function __invoke(int $userId): JsonResponse
+    public function __invoke(int $id): JsonResponse
     {
-        $user = $this->userService->deleteUser($userId)->toArray();
+        $user = $this->userService->deleteUser($id);
 
-        return $this->jsonSuccessResponse($user, 'User deleted successfully');
+        return $this->successResponse($user, 'User deleted successfully');
     }
 }

@@ -2,10 +2,13 @@
 
 namespace App\Service\User\V1;
 
+use App\Exceptions\CollectionEmptyException;
+use App\Exceptions\ResourceNotFoundException;
 use App\Models\User;
 use App\Repository\User\V1\Contracts\UserRepositoryInterface;
 use App\Service\User\V1\Contracts\UserServiceInterface;
-use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserService implements UserServiceInterface
 {
@@ -16,28 +19,67 @@ class UserService implements UserServiceInterface
         $this->userRepository = $userRepository;
     }
 
-    public function getAllUsers(): Collection
+    public function getAllUsers(): array
     {
-        return $this->userRepository->all();
+        $users = $this->userRepository->all();
+
+        if ($users->isEmpty()) {
+            throw new CollectionEmptyException('No users found in the database.', Response::HTTP_NOT_FOUND);
+        }
+
+        return $users->toArray();
     }
 
-    public function getUserById(int $id): ?User
+    public function getAllUsersPaginated(): LengthAwarePaginator
     {
-        return $this->userRepository->getById($id);
+        $users = $this->userRepository->allPaginated();
+
+        if ($users->isEmpty()) {
+            throw new CollectionEmptyException('No users found in the database.', Response::HTTP_NOT_FOUND);
+        }
+
+        return $users;
     }
 
-    public function storeNewUser(array $data): ?User
+    public function getUserById(int $id): array
     {
-        return $this->userRepository->create($data);
+        $user = $this->userRepository->getById($id);
+
+        if (! $user) {
+            throw new ResourceNotFoundException('User not found.');
+        }
+
+        return $user->toArray();
     }
 
-    public function updateUser(array $data, int $id): ?User
+    public function storeNewUser(array $data): array
     {
-        return $this->userRepository->update($data, $id);
+        return $this->userRepository->create($data)->toArray();
     }
 
-    public function deleteUser(int $id): ?User
+    public function updateUser(array $data, int $id): array
     {
-        return $this->userRepository->delete($id);
+        $user = $this->userRepository->getById($id);
+
+        if (! $user) {
+            throw new ResourceNotFoundException('User not found.');
+        }
+
+        $userUpdated = $this->userRepository->update($data, $user);
+
+        return $userUpdated->toArray();
+    }
+
+    public function deleteUser(int $id): array
+    {
+        $user = $this->userRepository->getById($id);
+
+        if (! $user) {
+            throw new ResourceNotFoundException('User not found.');
+        }
+
+        $userDeleted = $this->userRepository->delete($user);
+
+        return $userDeleted->toArray();
     }
 }

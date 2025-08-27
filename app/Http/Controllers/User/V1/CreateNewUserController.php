@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Post\User\V1;
+namespace App\Http\Controllers\User\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewUserRequest;
@@ -23,9 +23,9 @@ class CreateNewUserController extends Controller
     {
         $data = $request->validated();
 
-        $user = $this->userService->storeNewUser($data)->toArray();
+        $user = $this->userService->storeNewUser($data);
 
-        return $this->jsonSuccessResponse(
+        return $this->successResponse(
             $user,
             'User created successfully',
             Response::HTTP_CREATED

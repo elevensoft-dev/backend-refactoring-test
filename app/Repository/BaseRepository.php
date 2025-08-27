@@ -15,33 +15,27 @@ class BaseRepository implements BaseRepositoryInterface
         $this->model = $model;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function all(
-        $columns = ['*'],
-        array $relations = [],
-        bool $paginate = false,
-        int $perPage = 15,
-    ): Collection|LengthAwarePaginator {
-        $query = $this->model->with($relations)->select($columns);
-
-        if ($paginate) {
-            return $query->paginate($perPage);
-        }
-
-        return $query->get();
+    public function all(): Collection
+    {
+        return $this->model->all();
     }
 
     /**
      * @inheritDoc
      */
-    public function getById(int $id, array $columns = ['*'], array $relations = []): ?Model
+    public function allPaginated(int $perPage = 10): LengthAwarePaginator
+    {
+        return $this->model->paginate($perPage);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getById(int $id): ?Model
     {
         return $this->model
-            ->with($relations)
-            ->select($columns)
-            ->findOrFail($id);
+            ->where('id', $id)
+            ->first();
     }
 
     /**
@@ -55,26 +49,22 @@ class BaseRepository implements BaseRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function update(array $data, int $id): ?Model
+    public function update(array $data, Model $model): Model
     {
-        $result = $this->model->findOrFail($id);
+        $model->update($data);
 
-        $result->update($data);
+        $model->refresh();
 
-        $result->refresh();
-
-        return $result;
+        return $model;
     }
 
     /**
      * @inheritDoc
      */
-    public function delete(int $id): ?Model
+    public function delete(Model $model): Model
     {
-        $result = $this->model->findOrFail($id);
+        $model->delete();
 
-        $result->delete();
-
-        return $result;
+        return $model;
     }
 }

@@ -2,18 +2,19 @@
 
 namespace App\Service\User\V1\Contracts;
 
-use App\Models\User;
-use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface UserServiceInterface
 {
-    public function getAllUsers(): ?Collection;
+    public function getAllUsers(): array;
 
-    public function getUserById(int $id): ?User;
+    public function getAllUsersPaginated(): ?LengthAwarePaginator;
 
-    public function storeNewUser(array $data): ?User;
+    public function getUserById(int $id): array;
 
-    public function updateUser(array $data, int $id): ?User;
+    public function storeNewUser(array $data): array;
 
-    public function deleteUser(int $id): ?User;
+    public function updateUser(array $data, int $id): array;
+
+    public function deleteUser(int $id): array;
 }

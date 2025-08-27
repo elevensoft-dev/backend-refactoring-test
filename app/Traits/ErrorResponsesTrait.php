@@ -6,10 +6,10 @@ use Illuminate\Http\JsonResponse;
 
 trait ErrorResponsesTrait
 {
-    private function jsonErrorResponse(string $message, int $statusCode): JsonResponse
+    private function errorResponse(string $message, int $statusCode): JsonResponse
     {
         $response = [
-            'status' => 'error',
+            'success' => false,
             'code' => $statusCode,
             'error' => [
                 'message' => $message,
@@ -19,10 +19,10 @@ trait ErrorResponsesTrait
         return response()->json($response, $statusCode);
     }
 
-    private function jsonErrorsResponse(array $errors, int $statusCode): JsonResponse
+    private function errorsResponse(array $errors, int $statusCode): JsonResponse
     {
         $response = [
-            'status' => 'error',
+            'success' => false,
             'code' => $statusCode,
             'errors' => $errors,
         ];

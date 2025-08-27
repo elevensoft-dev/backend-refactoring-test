@@ -6,7 +6,10 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 trait ExceptionsResponseTrait
 {
@@ -15,28 +18,42 @@ trait ExceptionsResponseTrait
     private function exceptionResponse(Exception $exception, Request $request): JsonResponse
     {
         if (! $request->expectsJson()) {
-            return $this->jsonErrorResponse(
+            return $this->errorResponse(
                 'Content not valid',
                 Response::HTTP_NOT_ACCEPTABLE
             );
         }
 
         if ($exception instanceof ValidationException) {
-            return $this->jsonErrorsResponse(
+            return $this->errorsResponse(
                 $exception->errors(),
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
 
         $errorResponse = [
-            'message' => 'Unexpected error',
+            'message' => 'Unexpected error.',
             'code' => Response::HTTP_INTERNAL_SERVER_ERROR,
         ];
 
         if ($exception instanceof InvalidArgumentException) {
             $errorResponse = [
-                'message' => 'Logic error',
+                'message' => 'Logic error.',
                 'code' => Response::HTTP_BAD_REQUEST,
+            ];
+        }
+
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            $errorResponse = [
+                'message' => 'Method not allowed.',
+                'code' => Response::HTTP_METHOD_NOT_ALLOWED,
+            ];
+        }
+
+        if ($exception instanceof NotFoundHttpException) {
+            $errorResponse = [
+                'message' => 'Url not found.',
+                'code' => Response::HTTP_NOT_FOUND,
             ];
         }
 
@@ -52,7 +69,7 @@ trait ExceptionsResponseTrait
             'trace' => $exception->getTraceAsString(),
         ]);
 
-        return $this->jsonErrorResponse(
+        return $this->errorResponse(
             $errorResponse['message'],
             $errorResponse['code'],
         );

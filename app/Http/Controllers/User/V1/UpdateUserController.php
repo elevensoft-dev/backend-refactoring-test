@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Get\User\V1;
+namespace App\Http\Controllers\User\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateUserRequest;
 use App\Service\User\V1\Contracts\UserServiceInterface;
 use App\Traits\SuccessResponsesTrait;
 use Illuminate\Http\JsonResponse;
 
-class UserByIdController extends Controller
+class UpdateUserController extends Controller
 {
     use SuccessResponsesTrait;
 
@@ -18,10 +19,12 @@ class UserByIdController extends Controller
         $this->userService = $userService;
     }
 
-    public function __invoke(int $id): JsonResponse
+    public function __invoke(int $id, UpdateUserRequest $request): JsonResponse
     {
-        $user = $this->userService->getUserById($id)->toArray();
+        $data = $request->validated();
 
-        return $this->jsonSuccessResponse($user, 'User retrieved successfully');
+        $user = $this->userService->updateUser($data, $id);
+
+        return $this->successResponse($user, 'User updated successfully');
     }
 }
