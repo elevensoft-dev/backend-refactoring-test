@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -40,6 +41,13 @@ trait ExceptionsResponseTrait
             $errorResponse = [
                 'message' => 'Logic error.',
                 'code' => Response::HTTP_BAD_REQUEST,
+            ];
+        }
+
+        if ($exception instanceof AuthenticationException) {
+            $errorResponse = [
+                'message' => 'Unauthenticated.',
+                'code' => Response::HTTP_UNAUTHORIZED,
             ];
         }
 

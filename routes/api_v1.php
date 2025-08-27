@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\V1\LoginController;
+use App\Http\Controllers\Auth\V1\LogoutController;
 use App\Http\Controllers\User\V1\CreateNewUserController;
 use App\Http\Controllers\User\V1\DeleteUserController;
 use App\Http\Controllers\User\V1\GetAllUsersController;
@@ -20,17 +22,30 @@ use Illuminate\Support\Facades\Route;
 */
 //Route::apiResource('users', UserController::class);
 
+Route::group(['prefix'=> 'auth'], function (): void {
+    Route::post('/login', LoginController::class)->name('auth.login');
+
+    // Protected auth routes
+    Route::middleware('auth:api')->group(function (): void {
+        Route::post('/logout', LogoutController::class)->name('auth.logout');
+    });
+});
+
 Route::group(['prefix'=> 'users'], function (): void {
-    Route::get('/all', GetAllUsersController::class)
-        ->name('users.all');
-    Route::get('/all/paginate', GetAllUsersPaginatedController::class)
-        ->name('users.all.paginate');
     Route::post('/new', CreateNewUserController::class)
         ->name('user.store');
-    Route::get('/by-id/{id}', GetUserByIdController::class)
-        ->name('user.get-by-id');
-    Route::patch('/update/{id}', UpdateUserController::class)
-        ->name('user.update');
-    Route::delete('/remove/{id}', DeleteUserController::class)
-        ->name('user.delete');
+
+    // Protected user routes
+    Route::middleware('auth:api')->group(function (): void {
+        Route::get('/all', GetAllUsersController::class)
+        ->name('users.all');
+        Route::get('/all/paginate', GetAllUsersPaginatedController::class)
+            ->name('users.all.paginate');
+        Route::get('/by-id/{id}', GetUserByIdController::class)
+            ->name('user.get-by-id');
+        Route::patch('/update/{id}', UpdateUserController::class)
+            ->name('user.update');
+        Route::delete('/remove/{id}', DeleteUserController::class)
+            ->name('user.delete');
+    });
 });
