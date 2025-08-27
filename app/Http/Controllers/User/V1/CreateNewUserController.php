@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\User\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateNewUserRequest;
+use App\Http\Requests\User\V1\CreateNewUserRequest;
 use App\Service\User\V1\Contracts\UserServiceInterface;
 use App\Traits\SuccessResponsesTrait;
 use Illuminate\Http\JsonResponse;
