@@ -4,7 +4,6 @@ namespace App\Service\User\V1;
 
 use App\Exceptions\CollectionEmptyException;
 use App\Exceptions\ResourceNotFoundException;
-use App\Models\User;
 use App\Repository\User\V1\Contracts\UserRepositoryInterface;
 use App\Service\User\V1\Contracts\UserServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
