@@ -4,9 +4,12 @@ namespace App\Service\User\V1;
 
 use App\Exceptions\CollectionEmptyException;
 use App\Exceptions\ResourceNotFoundException;
+use App\Http\Resources\User\V1\UserPaginationCollection;
+use App\Http\Resources\User\V1\UserResource;
 use App\Repository\User\V1\Contracts\UserRepositoryInterface;
 use App\Service\User\V1\Contracts\UserServiceInterface;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserService implements UserServiceInterface
@@ -18,7 +21,7 @@ class UserService implements UserServiceInterface
         $this->userRepository = $userRepository;
     }
 
-    public function getAllUsers(): array
+    public function getAllUsers(): ResourceCollection
     {
         $users = $this->userRepository->all();
 
@@ -26,21 +29,21 @@ class UserService implements UserServiceInterface
             throw new CollectionEmptyException('No users found in the database.', Response::HTTP_NOT_FOUND);
         }
 
-        return $users->toArray();
+        return UserResource::collection($users);
     }
 
-    public function getAllUsersPaginated(): LengthAwarePaginator
+    public function getAllUsersPaginated(): ResourceCollection
     {
-        $users = $this->userRepository->allPaginated();
+        $usersPaginated = $this->userRepository->allPaginated();
 
-        if ($users->isEmpty()) {
+        if ($usersPaginated->isEmpty()) {
             throw new CollectionEmptyException('No users found in the database.', Response::HTTP_NOT_FOUND);
         }
 
-        return $users;
+        return new UserPaginationCollection($usersPaginated);
     }
 
-    public function getUserById(int $id): array
+    public function getUserById(int $id): JsonResource
     {
         $user = $this->userRepository->getById($id);
 
@@ -48,15 +51,17 @@ class UserService implements UserServiceInterface
             throw new ResourceNotFoundException('User not found.');
         }
 
-        return $user->toArray();
+        return new UserResource($user);
     }
 
-    public function storeNewUser(array $data): array
+    public function storeNewUser(array $data): JsonResource
     {
-        return $this->userRepository->create($data)->toArray();
+        $userCreated = $this->userRepository->create($data);
+
+        return new UserResource($userCreated);
     }
 
-    public function updateUser(array $data, int $id): array
+    public function updateUser(array $data, int $id): JsonResource
     {
         $user = $this->userRepository->getById($id);
 
@@ -66,10 +71,10 @@ class UserService implements UserServiceInterface
 
         $userUpdated = $this->userRepository->update($data, $user);
 
-        return $userUpdated->toArray();
+        return new UserResource($userUpdated);
     }
 
-    public function deleteUser(int $id): array
+    public function deleteUser(int $id): JsonResource
     {
         $user = $this->userRepository->getById($id);
 
@@ -79,6 +84,6 @@ class UserService implements UserServiceInterface
 
         $userDeleted = $this->userRepository->delete($user);
 
-        return $userDeleted->toArray();
+        return new UserResource($userDeleted);
     }
 }

@@ -2,14 +2,15 @@
 
 namespace App\Traits;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 trait SuccessResponsesTrait
 {
     private function successResponse(
-        array $data,
+        JsonResource $data,
         string $message = 'Request was successful',
         int $statusCode = Response::HTTP_OK,
     ): JsonResponse {
@@ -24,7 +25,7 @@ trait SuccessResponsesTrait
     }
 
     private function paginationSuccessResponse(
-        LengthAwarePaginator $paginatedData,
+        ResourceCollection $paginatedData,
         string $message = 'Request was successful',
         int $statusCode = Response::HTTP_OK,
     ): JsonResponse {

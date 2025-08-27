@@ -20,8 +20,8 @@ class LogoutController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $logout = $this->authService->revokeToken($request);
+        $logoutResource = $this->authService->revokeToken($request);
 
-        return $this->successResponse(['logout' => $logout], 'User logged out successfully');
+        return $this->successResponse($logoutResource, 'User logged out successfully');
     }
 }
