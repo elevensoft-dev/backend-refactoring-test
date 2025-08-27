@@ -12,25 +12,25 @@ use Illuminate\Http\JsonResponse;
  *
  * @OA\Get(
  *     path="/v1/users/all",
- *     summary="Listar usuários",
+ *     summary="List all users",
  *     tags={"Users"},
  *     security={
  *         {"bearerAuth": {}}
  *     },
  *     @OA\Response(
  *         response=200,
- *         description="Lista de usuários",
+ *         description="User list",
  *         @OA\JsonContent(ref="#/components/schemas/SuccessResponse")
  *
  *     ),
  *     @OA\Response(
  *         response=401,
- *         description="Não autorizado",
+ *         description="Not authorized",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Nenhum usuário encontrado",
+ *         description="Users not found",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     )
  * )

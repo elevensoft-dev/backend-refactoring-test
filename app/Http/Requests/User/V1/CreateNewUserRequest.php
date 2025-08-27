@@ -9,9 +9,9 @@ use Illuminate\Foundation\Http\FormRequest;
  *     schema="CreateNewUserRequest",
  *     type="object",
  *     title="Create User Validation",
- *     required={"name","email","password"},
- *     @OA\Property(property="name", type="string", example="Usuário Teste"),
- *     @OA\Property(property="email", type="string", example="teste@email.com"),
+ *     required={"name", "email", "password"},
+ *     @OA\Property(property="name", type="string", example="Test user"),
+ *     @OA\Property(property="email", type="string", example="test@email.com"),
  *     @OA\Property(property="password", type="string", format="password", example="123456"),
  *     @OA\Property(property="password_confirmation", type="string", format="password", example="123456")
  * )

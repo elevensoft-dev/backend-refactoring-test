@@ -10,7 +10,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *     type="object",
  *     title="Update User Validation",
  *     required={"name"},
- *     @OA\Property(property="name", type="string", example="Usuário Teste")
+ *     @OA\Property(property="name", type="string", example="Test user updated")
  * )
  */
 class UpdateUserRequest extends FormRequest

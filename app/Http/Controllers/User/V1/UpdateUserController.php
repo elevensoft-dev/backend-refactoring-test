@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 /**
  * @OA\Put(
  *     path="/v1/users/update/{id}",
- *     summary="Atualizar um usuário",
+ *     summary="Update an user",
  *     tags={"Users"},
  *     security={
  *         {"bearerAuth": {}}
@@ -20,7 +20,7 @@ use Illuminate\Http\JsonResponse;
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID do usuário",
+ *         description="User ID",
  *         @OA\Schema(type="integer", example=1)
  *     ),
  *     @OA\RequestBody(
@@ -31,17 +31,17 @@ use Illuminate\Http\JsonResponse;
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Usuário atualizado com sucesso",
+ *         description="User update successfully",
  *         @OA\JsonContent(ref="#/components/schemas/User")
  *     ),
  *     @OA\Response(
  *         response=401,
- *         description="Não autorizado",
+ *         description="Not authorized",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Usuário não encontrado",
+ *         description="User not found",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     )
  * )

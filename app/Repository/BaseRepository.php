@@ -23,7 +23,7 @@ class BaseRepository implements BaseRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function allPaginated(int $perPage = 10): LengthAwarePaginator
+    public function allPaginated(int $perPage): LengthAwarePaginator
     {
         return $this->model->paginate($perPage);
     }

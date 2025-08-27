@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @OA\Post(
  *     path="/v1/users/new",
- *     summary="Criar um novo usuário",
+ *     summary="Create a new user",
  *     tags={"Users"},
  *     @OA\RequestBody(
  *         required=true,
@@ -20,12 +20,12 @@ use Symfony\Component\HttpFoundation\Response;
  *     ),
  *     @OA\Response(
  *         response=201,
- *         description="Usuário criado com sucesso",
+ *         description="User created successfully",
  *         @OA\JsonContent(ref="#/components/schemas/SuccessResponse")
  *     ),
  *     @OA\Response(
  *         response=422,
- *         description="Erro de validação",
+ *         description="Validation error",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorsResponse")
  *     )
  * )

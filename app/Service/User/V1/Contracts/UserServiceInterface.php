@@ -10,7 +10,7 @@ interface UserServiceInterface
 {
     public function getAllUsers(): ResourceCollection;
 
-    public function getAllUsersPaginated(): ResourceCollection;
+    public function getAllUsersPaginated(?int $itemsPerPage = null): ResourceCollection;
 
     public function getUserById(int $id): JsonResource;
 

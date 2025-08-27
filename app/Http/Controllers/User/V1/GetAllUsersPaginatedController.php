@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Service\User\V1\Contracts\UserServiceInterface;
 use App\Traits\SuccessResponsesTrait;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Return a list of paginated users
  * @OA\Get(
  *     path="/v1/users/all/paginate",
- *     summary="Listar usuários paginados",
+ *     summary="User list paginated",
  *     tags={"Users"},
  *     security={
  *         {"bearerAuth": {}}
@@ -19,30 +20,30 @@ use Illuminate\Http\JsonResponse;
  *     @OA\Parameter(
  *         name="page",
  *         in="query",
- *         description="Número da página",
+ *         description="Page number",
  *         required=false,
  *         @OA\Schema(type="integer", example=1)
  *     ),
  *     @OA\Parameter(
- *         name="per_page",
+ *         name="per-page",
  *         in="query",
- *         description="Quantidade de itens por página",
+ *         description="Items per page",
  *         required=false,
  *         @OA\Schema(type="integer", example=10)
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Lista de usuários paginada",
+ *         description="Paginated user list",
  *         @OA\JsonContent(ref="#/components/schemas/SuccessPaginatedResponse")
  *     ),
  *     @OA\Response(
  *         response=401,
- *         description="Não autorizado",
+ *         description="Not authorized",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Usuário não encontrado",
+ *         description="User not found",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     )
  * )
@@ -56,13 +57,15 @@ class GetAllUsersPaginatedController extends Controller
     ) {
     }
 
-    public function __invoke(): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
-        $usersPaginated = $this->userService->getAllUsersPaginated();
+        $itemsPerPage = $request->query->get('per-page');
+
+        $usersPaginated = $this->userService->getAllUsersPaginated($itemsPerPage);
 
         return $this->paginationSuccessResponse(
             $usersPaginated,
-            'Users retrieved successfully'
+            'Users retrieved successfully.'
         );
     }
 }

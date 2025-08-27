@@ -10,19 +10,19 @@ use Illuminate\Http\Request;
 /**
  * @OA\Post(
  *     path="/v1/auth/logout",
- *     summary="Logout do usuário",
+ *     summary="User logout",
  *     tags={"Auth"},
  *     security={
  *         {"bearerAuth": {}}
  *     },
  *     @OA\Response(
  *         response=200,
- *         description="Usuário deslogado",
+ *         description="User logoff",
  *         @OA\JsonContent(ref="#/components/schemas/LogoutResource")
  *     ),
  *     @OA\Response(
  *         response=401,
- *         description="Credenciais inválidas",
+ *         description="Invalid credentials",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     )
  * )

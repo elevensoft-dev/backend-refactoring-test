@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 /**
  * @OA\Delete(
  *     path="/v1/users/delete/{id}",
- *     summary="Excluir um usuário",
+ *     summary="Delete an user",
  *     tags={"Users"},
  *     security={
  *         {"bearerAuth": {}}
@@ -19,22 +19,22 @@ use Illuminate\Http\JsonResponse;
  *         name="id",
  *         in="path",
  *         required=true,
- *         description="ID do usuário",
+ *         description="User ID",
  *         @OA\Schema(type="integer", example=1)
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Usuário excluído com sucesso",
+ *         description="User deleted successfully",
  *         @OA\JsonContent(ref="#/components/schemas/SuccessResponse")
  *     ),
  *     @OA\Response(
  *         response=401,
- *         description="Não autorizado",
+ *         description="Not Authorized",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Usuário não encontrado",
+ *         description="User not found",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     )
  * )

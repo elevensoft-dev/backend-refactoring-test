@@ -16,7 +16,7 @@ interface BaseRepositoryInterface
     /**
      * Get all records from database and paginate it
      */
-    public function allPaginated(int $perPage = 10): LengthAwarePaginator;
+    public function allPaginated(int $perPage): LengthAwarePaginator;
 
     /**
      * Get a record by id

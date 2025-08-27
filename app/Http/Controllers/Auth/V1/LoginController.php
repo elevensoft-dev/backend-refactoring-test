@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 /**
  * @OA\Post(
  *     path="/v1/auth/login",
- *     summary="Login do usuário",
+ *     summary="User login",
  *     tags={"Auth"},
  *     @OA\RequestBody(
  *         required=true,
@@ -23,12 +23,12 @@ use Illuminate\Http\JsonResponse;
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Login bem-sucedido",
+ *         description="Login successfull",
  *         @OA\JsonContent(ref="#/components/schemas/LoginResource")
  *     ),
  *     @OA\Response(
  *         response=401,
- *         description="Credenciais inválidas",
+ *         description="Invalid credentials",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     )
  * )

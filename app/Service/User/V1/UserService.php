@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserService implements UserServiceInterface
 {
+    private const PAGINATION_ITEMS_PER_PAGE = 10;
+
     private UserRepositoryInterface $userRepository;
 
     public function __construct(UserRepositoryInterface $userRepository)
@@ -32,9 +34,11 @@ class UserService implements UserServiceInterface
         return UserResource::collection($users);
     }
 
-    public function getAllUsersPaginated(): ResourceCollection
+    public function getAllUsersPaginated(?int $itemsPerPage = null): ResourceCollection
     {
-        $usersPaginated = $this->userRepository->allPaginated();
+        $perPage = $itemsPerPage ?? self::PAGINATION_ITEMS_PER_PAGE;
+
+        $usersPaginated = $this->userRepository->allPaginated($perPage);
 
         if ($usersPaginated->isEmpty()) {
             throw new CollectionEmptyException('No users found in the database.', Response::HTTP_NOT_FOUND);
