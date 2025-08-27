@@ -21,7 +21,6 @@ class AuthService implements AuthServiceInterface
         $token = $user->createToken('auth_token')->accessToken;
 
         return [
-            'user' => $user,
             'token_type' => 'Bearer',
             'access_token' => $token,
         ];

@@ -12,12 +12,9 @@ class UpdateUserController extends Controller
 {
     use SuccessResponsesTrait;
 
-    private UserServiceInterface $userService;
-
-    public function __construct(UserServiceInterface $userService)
-    {
-        $this->userService = $userService;
-    }
+    public function __construct(
+        private UserServiceInterface $userService
+    ) {}
 
     public function __invoke(int $id, UpdateUserRequest $request): JsonResponse
     {

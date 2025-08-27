@@ -12,12 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 class CreateNewUserController extends Controller
 {
     use SuccessResponsesTrait;
-    private UserServiceInterface $userService;
 
-    public function __construct(UserServiceInterface $userService)
-    {
-        $this->userService = $userService;
-    }
+    public function __construct(
+        private UserServiceInterface $userService,
+    ) {}
 
     public function __invoke(CreateNewUserRequest $request): JsonResponse
     {

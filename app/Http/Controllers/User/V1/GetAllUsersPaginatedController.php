@@ -11,12 +11,9 @@ class GetAllUsersPaginatedController extends Controller
 {
     use SuccessResponsesTrait;
 
-    private UserServiceInterface $userService;
-
-    public function __construct(UserServiceInterface $userService)
-    {
-        $this->userService = $userService;
-    }
+    public function __construct(
+        private UserServiceInterface $userService
+    ) {}
 
     public function __invoke(): JsonResponse
     {
