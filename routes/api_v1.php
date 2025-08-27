@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-//Route::apiResource('users', UserController::class);
 
 Route::group(['prefix'=> 'auth'], function (): void {
     Route::post('/login', LoginController::class)->name('auth.login');

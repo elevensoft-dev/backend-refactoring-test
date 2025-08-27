@@ -4,6 +4,15 @@ namespace App\Http\Requests\User\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateUserRequest",
+ *     type="object",
+ *     title="Update User Validation",
+ *     required={"name"},
+ *     @OA\Property(property="name", type="string", example="Usuário Teste")
+ * )
+ */
 class UpdateUserRequest extends FormRequest
 {
     /**

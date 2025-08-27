@@ -9,6 +9,27 @@ use App\Traits\SuccessResponsesTrait;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @OA\Post(
+ *     path="/v1/users/new",
+ *     summary="Criar um novo usuário",
+ *     tags={"Users"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(ref="#/components/schemas/CreateNewUserRequest")
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Usuário criado com sucesso",
+ *         @OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Erro de validação",
+ *         @OA\JsonContent(ref="#/components/schemas/ErrorsResponse")
+ *     )
+ * )
+ */
 class CreateNewUserController extends Controller
 {
     use SuccessResponsesTrait;
