@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Traits\ErrorResponsesTrait;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class LogoutErrorException extends Exception
 {
@@ -12,7 +13,7 @@ class LogoutErrorException extends Exception
 
     protected $message = 'Unxpected error during logout.';
 
-    protected $status = Response::BAD_REQUEST;
+    protected $status = Response::HTTP_BAD_REQUEST;
 
     public function render(): JsonResponse
     {
