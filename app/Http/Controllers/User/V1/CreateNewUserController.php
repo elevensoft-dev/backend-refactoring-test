@@ -10,6 +10,8 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * Create new user
+ *
  * @OA\Post(
  *     path="/v1/users/new",
  *     summary="Create a new user",
@@ -21,12 +23,12 @@ use Symfony\Component\HttpFoundation\Response;
  *     @OA\Response(
  *         response=201,
  *         description="User created successfully",
- *         @OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/CreateNewUserSuccessResponse")
  *     ),
  *     @OA\Response(
  *         response=422,
  *         description="Validation error",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorsResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/CreateUserUnprocessableEntityResponse")
  *     )
  * )
  */

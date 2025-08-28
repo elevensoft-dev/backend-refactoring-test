@@ -9,6 +9,8 @@ use App\Traits\SuccessResponsesTrait;
 use Illuminate\Http\JsonResponse;
 
 /**
+ * Update user
+ *
  * @OA\Put(
  *     path="/v1/users/update/{id}",
  *     summary="Update an user",
@@ -32,17 +34,22 @@ use Illuminate\Http\JsonResponse;
  *     @OA\Response(
  *         response=200,
  *         description="User update successfully",
- *         @OA\JsonContent(ref="#/components/schemas/User")
+ *         @OA\JsonContent(ref="#/components/schemas/UpdateUserSuccessResponse")
  *     ),
  *     @OA\Response(
  *         response=401,
  *         description="Not authorized",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
  *     ),
  *     @OA\Response(
  *         response=404,
  *         description="User not found",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/UserNotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error",
+ *         @OA\JsonContent(ref="#/components/schemas/UpdateUserUnprocessableEntityResponse")
  *     )
  * )
  */

@@ -10,7 +10,7 @@ class LogoutErrorException extends Exception
 {
     use ErrorResponsesTrait;
 
-    protected $message = "Unxpected error during logout.";
+    protected $message = 'Unxpected error during logout.';
 
     protected $status = Response::BAD_REQUEST;
 

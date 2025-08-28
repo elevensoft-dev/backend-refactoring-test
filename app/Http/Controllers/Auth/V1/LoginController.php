@@ -9,6 +9,8 @@ use App\Traits\SuccessResponsesTrait;
 use Illuminate\Http\JsonResponse;
 
 /**
+ * User login
+ *
  * @OA\Post(
  *     path="/v1/auth/login",
  *     summary="User login",
@@ -24,12 +26,17 @@ use Illuminate\Http\JsonResponse;
  *     @OA\Response(
  *         response=200,
  *         description="Login successfull",
- *         @OA\JsonContent(ref="#/components/schemas/LoginResource")
+ *         @OA\JsonContent(ref="#/components/schemas/UserLoginSuccessResponse")
  *     ),
  *     @OA\Response(
  *         response=401,
  *         description="Invalid credentials",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/InvalidLoginCredentialsResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error",
+ *         @OA\JsonContent(ref="#/components/schemas/LoginUnprocessableEntityResponse")
  *     )
  * )
  */

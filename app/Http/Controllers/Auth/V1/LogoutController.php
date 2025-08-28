@@ -8,6 +8,8 @@ use App\Traits\SuccessResponsesTrait;
 use Illuminate\Http\Request;
 
 /**
+ * User logout
+ *
  * @OA\Post(
  *     path="/v1/auth/logout",
  *     summary="User logout",
@@ -18,12 +20,12 @@ use Illuminate\Http\Request;
  *     @OA\Response(
  *         response=200,
  *         description="User logoff",
- *         @OA\JsonContent(ref="#/components/schemas/LogoutResource")
+ *         @OA\JsonContent(ref="#/components/schemas/UserLogoutSuccessResponse")
  *     ),
  *     @OA\Response(
- *         response=401,
- *         description="Invalid credentials",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         response=400,
+ *         description="Error on logout",
+ *         @OA\JsonContent(ref="#/components/schemas/BadResponseLogoutResponse")
  *     )
  * )
  */

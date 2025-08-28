@@ -42,7 +42,7 @@ Route::group(['prefix'=> 'users'], function (): void {
             ->name('users.all.paginate');
         Route::get('/by-id/{id}', GetUserByIdController::class)
             ->name('user.get-by-id');
-        Route::patch('/update/{id}', UpdateUserController::class)
+        Route::put('/update/{id}', UpdateUserController::class)
             ->name('user.update');
         Route::delete('/remove/{id}', DeleteUserController::class)
             ->name('user.delete');

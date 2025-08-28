@@ -20,18 +20,17 @@ use Illuminate\Http\JsonResponse;
  *     @OA\Response(
  *         response=200,
  *         description="User list",
- *         @OA\JsonContent(ref="#/components/schemas/SuccessResponse")
- *
+ *         @OA\JsonContent(ref="#/components/schemas/AllUsersSuccessResponse")
  *     ),
  *     @OA\Response(
  *         response=401,
  *         description="Not authorized",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
  *     ),
  *     @OA\Response(
  *         response=404,
  *         description="Users not found",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/UsersNotFoundResponse")
  *     )
  * )
  */

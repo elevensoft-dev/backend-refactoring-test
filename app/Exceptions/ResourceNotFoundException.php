@@ -11,7 +11,7 @@ class ResourceNotFoundException extends Exception
 {
     use ErrorResponsesTrait;
 
-    protected $message = "Resource not found.";
+    protected $message = 'Resource not found.';
 
     protected $status = Response::HTTP_NOT_FOUND;
 

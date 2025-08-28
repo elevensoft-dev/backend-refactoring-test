@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 
 /**
  * Return a list of paginated users
+ *
  * @OA\Get(
  *     path="/v1/users/all/paginate",
  *     summary="User list paginated",
@@ -33,18 +34,18 @@ use Illuminate\Http\Request;
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Paginated user list",
- *         @OA\JsonContent(ref="#/components/schemas/SuccessPaginatedResponse")
+ *         description="User list",
+ *         @OA\JsonContent(ref="#/components/schemas/AllUsersPaginatedSuccessResponse")
  *     ),
  *     @OA\Response(
  *         response=401,
  *         description="Not authorized",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="User not found",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         description="Users not found",
+ *         @OA\JsonContent(ref="#/components/schemas/UsersNotFoundResponse")
  *     )
  * )
  */

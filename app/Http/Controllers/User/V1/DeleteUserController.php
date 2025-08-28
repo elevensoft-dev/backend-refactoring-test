@@ -8,6 +8,8 @@ use App\Traits\SuccessResponsesTrait;
 use Illuminate\Http\JsonResponse;
 
 /**
+ * Delete user
+ *
  * @OA\Delete(
  *     path="/v1/users/delete/{id}",
  *     summary="Delete an user",
@@ -25,17 +27,17 @@ use Illuminate\Http\JsonResponse;
  *     @OA\Response(
  *         response=200,
  *         description="User deleted successfully",
- *         @OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/DeleteUserSuccessResponse")
  *     ),
  *     @OA\Response(
  *         response=401,
  *         description="Not Authorized",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
  *     ),
  *     @OA\Response(
  *         response=404,
  *         description="User not found",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/UserNotFoundResponse")
  *     )
  * )
  */

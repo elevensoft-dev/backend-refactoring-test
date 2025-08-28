@@ -11,7 +11,7 @@ class CollectionEmptyException extends Exception
 {
     use ErrorResponsesTrait;
 
-    protected $message = "Empty collection.";
+    protected $message = 'Empty collection.';
 
     protected $status = Response::HTTP_NOT_FOUND;
 
