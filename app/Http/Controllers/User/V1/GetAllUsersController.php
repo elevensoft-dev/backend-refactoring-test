@@ -48,7 +48,7 @@ class GetAllUsersController extends Controller
 
         return $this->successResponse(
             $users,
-            'Users retrieved successfully'
+            'Users retrieved successfully.'
         );
     }
 }

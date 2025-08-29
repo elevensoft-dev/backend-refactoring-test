@@ -36,6 +36,6 @@ trait ModelsFactoryTrait
      */
     private function createManyModels(string $modelClass, int $count = 1, array $attributes = []): Collection
     {
-        return $modelClass::factory($count)->make($attributes);
+        return $modelClass::factory($count)->create($attributes);
     }
 }
