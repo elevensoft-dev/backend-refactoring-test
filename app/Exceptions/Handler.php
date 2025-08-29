@@ -2,11 +2,16 @@
 
 namespace App\Exceptions;
 
+use App\Traits\ExceptionsResponseTrait;
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use ExceptionsResponseTrait;
     /**
      * The list of the inputs that are never flashed to the session on validation exceptions.
      *
@@ -26,5 +31,9 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        $this->renderable(fn (Exception $exception, Request $request): JsonResponse
+            => $this->exceptionResponse($exception, $request)
+        );
     }
 }

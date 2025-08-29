@@ -54,7 +54,7 @@ api-test-feature:
 	docker-compose exec -it api php /var/www/html/artisan test --testsuite=Feature --stop-on-failure
 
 api-test-php-unit:
-	docker-compose exec -it api php /var/www/html/artisan phpunit
+	docker-compose exec -it api php /var/www/html/vendor/bin/phpunit
 
 api-build-swagger:
 	docker-compose exec -it api php /var/www/html/artisan l5-swagger:generate

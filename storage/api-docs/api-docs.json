@@ -15,74 +15,100 @@
         }
     ],
     "paths": {
-        "/users": {
-            "get": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Get list of users",
-                "description": "Returns list of users",
-                "operationId": "getUsersList",
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/User"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
+        "/v1/auth/login": {
             "post": {
                 "tags": [
-                    "Users"
+                    "Auth"
                 ],
-                "summary": "Store a new user",
-                "description": "Stores a new user",
-                "operationId": "storeUser",
+                "summary": "User login",
+                "description": "User login",
+                "operationId": "eec9361e4eabe96e759de104402123ae",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/User"
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@email.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "Login successfull",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "$ref": "#/components/schemas/UserLoginSuccessResponse"
                                 }
                             }
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated"
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InvalidLoginCredentialsResponse"
+                                }
+                            }
+                        }
                     },
-                    "403": {
-                        "description": "Forbidden"
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginUnprocessableEntityResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User logout",
+                "description": "User logout",
+                "operationId": "c47e23b6ffb4a77d3c112a7e5e42995e",
+                "responses": {
+                    "200": {
+                        "description": "User logoff",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserLogoutSuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error on logout",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadResponseLogoutResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -92,38 +118,98 @@
                 ]
             }
         },
-        "/users/{id}": {
-            "get": {
+        "/v1/users/new": {
+            "post": {
                 "tags": [
                     "Users"
                 ],
-                "summary": "Show a specific user",
-                "description": "Returns a specific user",
-                "operationId": "showUser",
+                "summary": "Create a new user",
+                "description": "Create new user",
+                "operationId": "92588e524881c8cfe9fd556bef633b06",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateNewUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateNewUserSuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateUserUnprocessableEntityResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete an user",
+                "description": "Delete user",
+                "operationId": "320bc659dd34d18dde3c386da8b1c2aa",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
                         "description": "User ID",
-                        "required": true
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "User deleted successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "$ref": "#/components/schemas/DeleteUserSuccessResponse"
                                 }
                             }
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated"
+                        "description": "Not Authorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
                     },
-                    "403": {
-                        "description": "Forbidden"
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserNotFoundResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -131,20 +217,201 @@
                         "bearerAuth": []
                     }
                 ]
-            },
-            "put": {
+            }
+        },
+        "/v1/users/all": {
+            "get": {
                 "tags": [
                     "Users"
                 ],
-                "summary": "Update a specific user",
-                "description": "Updates a specific user",
-                "operationId": "updateUser",
+                "summary": "List all users",
+                "description": "Return a list of users",
+                "operationId": "d729c49df23aceb393584734d05a6da1",
+                "responses": {
+                    "200": {
+                        "description": "User list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AllUsersSuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Users not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UsersNotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/users/all/paginate": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User list paginated",
+                "description": "Return a list of paginated users",
+                "operationId": "1b78c78efca0639daf2da8e373406ed6",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per-page",
+                        "in": "query",
+                        "description": "Items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AllUsersPaginatedSuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Users not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UsersNotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/users/by-id/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get an user",
+                "description": "Get user by id",
+                "operationId": "a8881e4a7c665621f8354b820ab7c727",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
                         "description": "User ID",
-                        "required": true
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetUserByIdSuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserNotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/users/update/{id}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update an user",
+                "description": "Update user",
+                "operationId": "f115f95800204c0a61808fa6403f4987",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
                     }
                 ],
                 "requestBody": {
@@ -152,66 +419,57 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/User"
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Teste Nome Atualizado"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "User update successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "$ref": "#/components/schemas/UpdateUserSuccessResponse"
                                 }
                             }
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Delete a specific user",
-                "description": "Deletes a specific user",
-                "operationId": "deleteUser",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "User ID",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
+                        "description": "Not authorized",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
                     },
-                    "401": {
-                        "description": "Unauthenticated"
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserNotFoundResponse"
+                                }
+                            }
+                        }
                     },
-                    "403": {
-                        "description": "Forbidden"
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateUserUnprocessableEntityResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -224,58 +482,535 @@
     },
     "components": {
         "schemas": {
-            "User": {
-                "title": "User",
-                "description": "User model",
+            "CreateNewUserRequest": {
+                "title": "Create User Validation",
+                "required": [
+                    "name",
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Test user"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "test@email.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "123456"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "123456"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateUserRequest": {
+                "title": "Update User Validation",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Test user updated"
+                    }
+                },
+                "type": "object"
+            },
+            "LoginResource": {
+                "title": "Login Resource",
+                "properties": {
+                    "token_type": {
+                        "type": "string",
+                        "example": "Bearer"
+                    },
+                    "access_token": {
+                        "type": "string",
+                        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiNThiZGIzZTM5NjgwYmIwNmRlNzZlZDRiZWVhZDEwNzZjMWY0NDNiZDA2ZDFlNWM2YWU1YzRmODhhNmY0ODI1ZDViZmVmMDNlNDk1MjZmZjAiLCJpYXQiOjE3NTYzMDE3MDYuNjAxOTY0LCJuYmYiOjE3NTYzMDE3MDYuNjAxOTY2LCJleHAiOjE3ODc4Mzc3MDYuNTk2MDExLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.utz_uFS-DStlvZxrD9qrPpPZg7EPSfrz7iHRg0Ar8m1gTdzV09fPZ-6Zhry-676eD8HzGcr8C6RMUQn2Ed7drG3Hsg-g5QKnGBDptNwW5dYZGeoB8_Erwr-ecy9MqXhSY_twXnJIyL5Y9g2FAKz7k522JGsn7kWyPvwj07oCddoMKQAjzAjSOdyvjWLPLi4wqbJLTXxeMaHcy8aalUCtxtNAtorntiws1-WBxfVsoTTqjwPXfvj0ie0aHC0sloKWQjMYjA71jPfGEhYqtFPooTTr4BsiKM7i13zYBmYbsAg1GFgMBcpDjiAzYy4S_b4hj7VjB0EA1AdV58eORqSEg0lxhTco4apTZrySPo863zxdTWsyGnYatSlczququjBVKf_FTrJ8KVCQxsm5yrkCe_8dGQXVhWVPcpE1tuT96hJ0OfFPg73QFqH_5IaRG0re0yVkcFHun-iXcomjAjVEPW34l3VZJGKf5w-qUXsgGL4zTS79emkSZjyauq9c86tDtWA0C6ohwftmWbg_SHCf0ivjOpvH8XDmhw-wFbNM_byDmEYbItOLmMLb25mEfxotcPw6yVj_O27rdxFa2HRYkbF--8Jm3nqETkqCUld-i3_0Rm4NUejyL2pnqyTaEL7D53d-a1kd73YQXsCBg4Z5F0EahUMaW98fiuqQJQHr99Y"
+                    }
+                },
+                "type": "object"
+            },
+            "LogoutResource": {
+                "title": "Logout Resource",
+                "properties": {
+                    "logout": {
+                        "type": "boolean",
+                        "example": "true"
+                    }
+                },
+                "type": "object"
+            },
+            "UserPaginationResource": {
+                "title": "User Pagination Resource",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResource"
+                        }
+                    },
+                    "meta": {
+                        "properties": {
+                            "current_page": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "from": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "last_page": {
+                                "type": "integer",
+                                "example": 10
+                            },
+                            "path": {
+                                "type": "string",
+                                "example": "http://localhost:8000/api/v1/users"
+                            },
+                            "per_page": {
+                                "type": "integer",
+                                "example": 10
+                            },
+                            "to": {
+                                "type": "integer",
+                                "example": 10
+                            },
+                            "total": {
+                                "type": "integer",
+                                "example": 100
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "links": {
+                        "properties": {
+                            "first": {
+                                "type": "string",
+                                "example": "http://localhost:8000/api/v1/users?page=1"
+                            },
+                            "last": {
+                                "type": "string",
+                                "example": "http://localhost:8000/api/v1/users?page=10"
+                            },
+                            "prev": {
+                                "type": "string",
+                                "example": null,
+                                "nullable": true
+                            },
+                            "next": {
+                                "type": "string",
+                                "example": "http://localhost:8000/api/v1/users?page=2",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "title": "User Resource",
                 "properties": {
                     "id": {
-                        "description": "User id",
                         "type": "integer",
                         "example": 1
                     },
                     "name": {
-                        "description": "User name",
                         "type": "string",
-                        "example": "John Doe"
+                        "example": "Usuário Teste"
                     },
                     "email": {
-                        "description": "User email",
                         "type": "string",
-                        "example": "example@elevensoft.dev"
-                    },
-                    "email_verified_at": {
-                        "description": "User email verified at",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2021-01-01 00:00:00"
-                    },
-                    "password": {
-                        "description": "User password",
-                        "type": "string",
-                        "example": "password"
-                    },
-                    "remember_token": {
-                        "description": "User remember token",
-                        "type": "string",
-                        "example": "token"
-                    },
-                    "created_at": {
-                        "description": "User created at",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2021-01-01 00:00:00"
-                    },
-                    "updated_at": {
-                        "description": "User updated at",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2021-01-01 00:00:00"
+                        "example": "teste@email.com"
                     }
                 },
-                "type": "object",
-                "xml": {
-                    "name": "User"
-                }
+                "type": "object"
+            },
+            "InvalidLoginCredentialsResponse": {
+                "title": "Invalid Login Credentials Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 401
+                    },
+                    "error": {
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "example": "Invalid credentials."
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UserLoginSuccessResponse": {
+                "title": "User Login Success Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "User logged in successfully"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LoginResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "LoginUnprocessableEntityResponse": {
+                "title": "Login Unprocessale Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 422
+                    },
+                    "errors": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "The email field is required."
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "BadResponseLogoutResponse": {
+                "title": "Bad Response Logout Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 400
+                    },
+                    "error": {
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "example": "Unxpected error during logout."
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UserLogoutSuccessResponse": {
+                "title": "User Logout Success Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "User logged out successfully"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LogoutResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UnauthorizedResponse": {
+                "title": "Unauthorized Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 401
+                    },
+                    "error": {
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "example": "Unauthenticated."
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "CreateNewUserSuccessResponse": {
+                "title": "Create New User Success Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 201
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "User created successfully."
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CreateUserUnprocessableEntityResponse": {
+                "title": "Create New User Unprocessale Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 422
+                    },
+                    "errors": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "The name field is required."
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "DeleteUserSuccessResponse": {
+                "title": "Delete User Success Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Users deleted successfully."
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "AllUsersSuccessResponse": {
+                "title": "All Users Success Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Users retrieved successfully."
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "AllUsersPaginatedSuccessResponse": {
+                "title": "All Users Paginnated Success Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Users retrieved successfully."
+                    },
+                    "pagination": {
+                        "properties": {
+                            "": {
+                                "$ref": "#/components/schemas/UserPaginationResource"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "GetUserByIdSuccessResponse": {
+                "title": "Get User By Id Success Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "User retrieved successfully"
+                    },
+                    "data": {}
+                },
+                "type": "object"
+            },
+            "UpdateUserSuccessResponse": {
+                "title": "Update User Success Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 201
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "User updated successfully."
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateUserUnprocessableEntityResponse": {
+                "title": "Update User Unprocessale Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 422
+                    },
+                    "errors": {
+                        "properties": {
+                            "name": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The name field is required."
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UserNotFoundResponse": {
+                "title": "User Not Found Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 404
+                    },
+                    "error": {
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "example": "User not found."
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UsersNotFoundResponse": {
+                "title": "Users Not Found Response",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "code": {
+                        "type": "integer",
+                        "example": 404
+                    },
+                    "error": {
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "example": "No users found in the database."
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
