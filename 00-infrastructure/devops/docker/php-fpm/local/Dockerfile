@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-alpine3.22 as eleven-php-fpm83-builder
+FROM php:8.3-fpm-alpine3.22 AS eleven-php-fpm83-builder
 
 RUN apk update && apk add --no-cache \
     linux-headers bash shadow libaio curl git icu-dev libnsl \
@@ -27,7 +27,6 @@ WORKDIR /var/www
 RUN rm -rf /var/www/html \
     && ln -s /var/www/public /var/www/html \
     && chown -R www-data:www-data /var/www
-
 
 ##### LOCAL DEVELOPMENT
 FROM eleven-php-fpm83-builder

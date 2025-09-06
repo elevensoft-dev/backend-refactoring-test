@@ -19,6 +19,15 @@ if [ ! -d "vendor" ]; then
     composer install --no-interaction --prefer-dist --optimize-autoloader
 fi
 
+# Aguarda o MySQL estar disponível
+wait_for_mysql() {
+    echo "Aguardando o MySQL iniciar em ${DB_HOST:-mysql}:${DB_PORT:-3306}..."
+    until nc -z -w 2 "${DB_HOST:-mysql}" "${DB_PORT:-3306}"; do
+        sleep 2
+    done
+    echo "MySQL está disponível!"
+}
+
 # Executa as migrações do banco de dados
 run_migrations() {
     echo "Verificando migrações pendentes..."
@@ -51,6 +60,7 @@ clear_cache() {
 
 # Apenas no primeiro container (usando variável de ambiente)
 if [ "${CONTAINER_ROLE:-app}" = "app" ]; then
+    wait_for_mysql
     clear_cache
     run_migrations
 fi
