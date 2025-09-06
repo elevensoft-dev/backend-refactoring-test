@@ -12,25 +12,16 @@ use Illuminate\Database\Eloquent\Builder;
  */
 final class UserQueryBuilder extends Builder
 {
-    /**
-     * Filtro por usuários ativos
-     */
     public function active(): self
     {
         return $this->where('active', true);
     }
 
-    /**
-     * Filtro por e-mail
-     */
     public function whereEmail(string $email): self
     {
         return $this->where('email', $email);
     }
 
-    /**
-     * Busca por nome ou e-mail
-     */
     public function search(string $term): self
     {
         return $this->where(function ($query) use ($term) {
@@ -40,17 +31,13 @@ final class UserQueryBuilder extends Builder
         });
     }
 
-    /**
-     * Filtro por data de criação
-     */
     public function createdAfter(string $date): self
     {
         return $this->where('created_at', '>=', $date);
     }
 
     /**
-     * Aplica filtros dinâmicos vindos da query string.
-     * Exemplo: filter(['isActive' => true, 'name' => 'walter'])
+     * Exemplo: filter(['isActive' => true, 'name' => 'john'])
      */
     public function filter(array $filters = []): self
     {
@@ -92,7 +79,6 @@ final class UserQueryBuilder extends Builder
         });
     }
 
-    // Métodos semânticos para uso direto
     public function isActive(): self
     {
         return $this->where('active', true);
