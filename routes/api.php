@@ -21,24 +21,36 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(AccountController::class)
     ->prefix('account')
+    ->name('account.')
     ->group(function () {
-        Route::post('register', 'register');
+        Route::post('register', 'register')->name('register');
 
         Route::middleware('auth:sanctum')->group(function () {
-            Route::get('profile', 'profile');
-            Route::put('profile', 'update');
-            Route::put('password', 'changePassword');
+            Route::get('profile', 'profile')->name('profile');
+            Route::put('profile', 'update')->name('update');
+            Route::put('password', 'changePassword')->name('changePassword');
         });
 
-        Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
-        Route::post('reset-password', [ForgotPasswordController::class, 'reset']);
+        Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('forgotPassword');
+        Route::post('reset-password', [ForgotPasswordController::class, 'reset'])->name('resetPassword');
     });
 
 Route::controller(AuthController::class)
     ->prefix('auth')
+    ->name('auth.')
     ->group(function () {
-        Route::post('login', 'login');
-        Route::middleware('auth:sanctum')->post('logout', 'logout');
+        Route::post('login', 'login')->name('login');
+        Route::middleware('auth:sanctum')->post('logout', 'logout')->name('logout');
     });
 
-Route::middleware('auth:sanctum')->apiResource('users', UserController::class);
+Route::controller(UserController::class)
+    ->prefix('users')
+    ->name('users.')
+    ->middleware('auth:sanctum')
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+        Route::get('{user}', 'show')->name('show');
+        Route::put('{user}', 'update')->name('update');
+        Route::delete('{user}', 'destroy')->name('destroy');
+    });
