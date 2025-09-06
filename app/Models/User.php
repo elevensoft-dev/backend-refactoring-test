@@ -1,9 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\QueryBuilders\UserQueryBuilder;
+use Hash;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -12,14 +18,21 @@ use Laravel\Sanctum\HasApiTokens;
  * @OA\Schema(
  *     title="User",
  *     description="User model",
- *     @OA\Xml(
- *         name="User"
- *     )
+ *
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="John Doe"),
+ *     @OA\Property(property="email", type="string", example="example@elevensoft.dev"),
+ *     @OA\Property(property="email_verified_at", type="datetime", example="2021-01-01 00:00:00"),
+ *     @OA\Property(property="password", type="string", example="password"),
+ *     @OA\Property(property="remember_token", type="string", example="token"),
+ *     @OA\Property(property="created_at", type="datetime", example="2021-01-01 00:00:00"),
+ *     @OA\Property(property="updated_at", type="datetime", example="2021-01-01 00:00:00"),
+ *     @OA\Property(property="deleted_at", type="datetime", example="2021-01-01 00:00:00", nullable=true),
  * )
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use CanResetPassword, HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -52,116 +65,18 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    /**
-     * User id
-     *
-     * @OA\Property(
-     *      property="id",
-     *      description="User id",
-     *      type="integer",
-     *      example=1
-     * )
-     *
-     * @var int
-     */
-    private int $id;
+    public function newEloquentBuilder($query): UserQueryBuilder
+    {
+        return new UserQueryBuilder($query);
+    }
 
     /**
-     * User name
-     *
-     * @OA\Property(
-     *      property="name",
-     *      description="User name",
-     *      type="string",
-     *      example="John Doe"
-     * )
-     *
-     * @var string
+     * @return Attribute<string, string>
      */
-    private string $name;
-
-    /**
-     * User email
-     *
-     * @OA\Property(
-     *      property="email",
-     *      description="User email",
-     *      type="string",
-     *      example="example@elevensoft.dev"
-     * )
-     *
-     * @var string
-     */
-    private string $email;
-
-    /**
-     * User verified at
-     *
-     * @OA\Property(
-     *      property="email_verified_at",
-     *      description="User email verified at",
-     *      type="datetime",
-     *      example="2021-01-01 00:00:00"
-     * )
-     *
-     * @var Carbon
-     */
-    private Carbon $email_verified_at;
-
-    /**
-     * User password
-     *
-     * @OA\Property(
-     *      property="password",
-     *      description="User password",
-     *      type="string",
-     *      example="password"
-     * )
-     *
-     * @var string
-     */
-    private string $password;
-
-    /**
-     * User remember token
-     *
-     * @OA\Property(
-     *      property="remember_token",
-     *      description="User remember token",
-     *      type="string",
-     *      example="token"
-     * )
-     *
-     * @var string
-     */
-    private string $remember_token;
-
-    /**
-     * User created at
-     *
-     * @OA\Property(
-     *      property="created_at",
-     *      description="User created at",
-     *      type="datetime",
-     *      example="2021-01-01 00:00:00"
-     * )
-     *
-     * @var Carbon
-     */
-    private Carbon $created_at;
-
-    /**
-     * User updated at
-     *
-     * @OA\Property(
-     *      property="updated_at",
-     *      description="User updated at",
-     *      type="datetime",
-     *      example="2021-01-01 00:00:00"
-     * )
-     *
-     * @var Carbon
-     */
-    private Carbon $updated_at;
+    protected function password(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => Hash::make($value),
+        );
+    }
 }
-
