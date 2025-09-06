@@ -1,0 +1,24 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+
+    paths:
+        - app/
+
+    # Level 9 is the highest level
+    level: 7
+
+    ignoreErrors:
+        - '#expects Illuminate\\Http\\UploadedFile, array<int, Illuminate\\Http\\UploadedFile>\|Illuminate\\Http\\UploadedFile\|null given.# '
+        - '#Call to an undefined method Spatie\\QueryBuilder\\QueryBuilder\:\:#'
+        - '#Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphTo in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphTo: TRelatedModel, TChildModel#'
+        - '#return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types: TRelatedModel, TChildModel#'
+        - '#phpstan: Binary operation "." between non-falsy-string and array\|string results in an error.#'
+#        - '#PHPDoc tag @var#'
+#
+    excludePaths:
+        - tests/*
+#        - ./*/*/FileToBeExcluded.php
+#
+#    checkMissingIterableValueType: false
