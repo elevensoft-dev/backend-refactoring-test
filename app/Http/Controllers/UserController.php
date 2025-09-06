@@ -1,234 +1,268 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Resources\User\UserResource;
+use App\UseCases\User\CreateUserUseCase;
+use App\UseCases\User\DeleteUserUseCase;
+use App\UseCases\User\DTOs\CreateUserDto;
+use App\UseCases\User\DTOs\ListUsersDto;
+use App\UseCases\User\DTOs\UpdateUserDto;
+use App\UseCases\User\ListUsersUseCase;
+use App\UseCases\User\ShowUserUseCase;
+use App\UseCases\User\UpdateUserUseCase;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
-class UserController extends Controller
+final class UserController extends Controller
 {
-    private User $user;
-
-    function __construct(User $user)
-    {
-        $this->user = $user;
-    }
-
     /**
      * Display a listing of the resource.
-     *
-     * @return Response
      *
      * @OA\Get(
      *      path="/users",
      *      operationId="getUsersList",
      *      summary="Get list of users",
      *      tags={"Users"},
-     *      description="Returns list of users",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
+     *      description="Returns paginated list of users",
+     *      security={{"bearerAuth": {}}},
+     *
+     *      @OA\Parameter(
+     *          name="filters[name]",
+     *          in="query",
+     *          required=false,
+     *
+     *          @OA\Schema(type="string"),
+     *          description="Filter by user name"
+     *      ),
+     *
+     *      @OA\Parameter(
+     *          name="filters[active]",
+     *          in="query",
+     *          required=false,
+     *
+     *          @OA\Schema(type="boolean"),
+     *          description="Filter by user active status"
+     *      ),
+     *
+     *      @OA\Parameter(
+     *          name="page",
+     *          in="query",
+     *          required=false,
+     *
+     *          @OA\Schema(type="integer"),
+     *          description="Page number for pagination"
+     *      ),
+     *
+     *      @OA\Parameter(
+     *          name="per_page",
+     *          in="query",
+     *          required=false,
+     *
+     *          @OA\Schema(type="integer"),
+     *          description="Items per page for pagination"
+     *      ),
+     *
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
+     *
      *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(
-     *                  ref="#/components/schemas/User"
-     *              )
-     *          ),
+     *              type="object",
+     *
+     *              @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/User")),
+     *              @OA\Property(property="current_page", type="integer"),
+     *              @OA\Property(property="last_page", type="integer"),
+     *              @OA\Property(property="per_page", type="integer"),
+     *              @OA\Property(property="total", type="integer"),
+     *              @OA\Property(property="from", type="integer"),
+     *              @OA\Property(property="to", type="integer")
+     *          )
      *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *
+     *      @OA\Response(response=401, description="Unauthenticated"),
+     *      @OA\Response(response=403, description="Forbidden")
      * )
      */
-    public function index(Request $request)
+    public function index(Request $request, ListUsersUseCase $listUsersUseCase): AnonymousResourceCollection
     {
-        return $this->user->get();
+        $dto = new ListUsersDto(
+            filters: $request->input('filters', []),
+            perPage: $request->integer('per_page', 15),
+        );
+
+        return UserResource::collection($listUsersUseCase->handle($dto));
     }
 
     /**
      * Show a specific user resource
      *
-     * @return User
-     *
      * @OA\Get(
-     *      path="/users/{id}",
-     *      operationId="showUser",
-     *      summary="Show a specific user",
+     *      path="/users/{user}",
+     *      operationId="getUserById",
+     *      summary="Get user by ID",
      *      tags={"Users"},
-     *      description="Returns a specific user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
+     *      description="Returns a single user resource",
+     *      security={{"bearerAuth": {}}},
+     *
      *      @OA\Parameter(
-     *          name="id",
-     *          description="User ID",
-     *          required=true,
+     *          name="user",
      *          in="path",
+     *          required=true,
+     *
+     *          @OA\Schema(type="integer"),
+     *          description="User ID"
      *      ),
+     *
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
+     *
      *          @OA\JsonContent(ref="#/components/schemas/User")
      *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *
+     *      @OA\Response(response=404, description="User not found"),
+     *      @OA\Response(response=401, description="Unauthenticated"),
+     *      @OA\Response(response=403, description="Forbidden")
      * )
      */
-    public function show(User $user)
+    public function show(int $id, ShowUserUseCase $showUserUseCase): UserResource
     {
-        return $user;
+        $user = $showUserUseCase->handle($id);
+
+        return new UserResource($user);
     }
 
     /**
-     * Store a newly created user in storage.
-     *
-     * @return User
+     * Store a newly created user in storage
      *
      * @OA\Post(
      *      path="/users",
      *      operationId="storeUser",
-     *      summary="Store a new user",
+     *      summary="Create a new user",
      *      tags={"Users"},
-     *      description="Stores a new user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
+     *      security={{"bearerAuth": {}}},
+     *
      *      @OA\RequestBody(
      *          required=true,
+     *
      *          @OA\JsonContent(ref="#/components/schemas/User")
      *      ),
+     *
      *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
+     *          response=201,
+     *          description="User created successfully",
+     *
      *          @OA\JsonContent(ref="#/components/schemas/User")
      *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *
+     *      @OA\Response(response=422, description="Validation error"),
+     *      @OA\Response(response=401, description="Unauthenticated"),
+     *      @OA\Response(response=403, description="Forbidden")
      * )
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request, CreateUserUseCase $createUserUseCase): UserResource
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        $dto = new CreateUserDto(
+            name: $request->validated('name'),
+            email: $request->validated('email'),
+            password: $request->validated('password'),
+        );
 
-        return $this->user->create($data);
+        $user = $createUserUseCase->handle($dto);
+
+        return new UserResource($user);
     }
 
     /**
-     * Update a specific user resource
-     *
-     * @return User
+     * Update the specified user in storage
      *
      * @OA\Put(
-     *      path="/users/{id}",
+     *      path="/users/{user}",
      *      operationId="updateUser",
-     *      summary="Update a specific user",
+     *      summary="Update an existing user",
      *      tags={"Users"},
-     *      description="Updates a specific user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
+     *      security={{"bearerAuth": {}}},
+     *
      *      @OA\Parameter(
-     *          name="id",
-     *          description="User ID",
-     *          required=true,
+     *          name="user",
      *          in="path",
+     *          required=true,
+     *
+     *          @OA\Schema(type="integer"),
+     *          description="User ID"
      *      ),
+     *
      *      @OA\RequestBody(
      *          required=true,
+     *
      *          @OA\JsonContent(ref="#/components/schemas/User")
      *      ),
+     *
      *      @OA\Response(
      *          response=200,
-     *          description="Successful operation",
+     *          description="User updated successfully",
+     *
      *          @OA\JsonContent(ref="#/components/schemas/User")
      *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *
+     *      @OA\Response(response=404, description="User not found"),
+     *      @OA\Response(response=422, description="Validation error"),
+     *      @OA\Response(response=401, description="Unauthenticated"),
+     *      @OA\Response(response=403, description="Forbidden")
      * )
      */
-    public function update(Request $request, User $user)
+    public function update(int $id, UpdateUserRequest $request, UpdateUserUseCase $updateUserUseCase): UserResource
     {
-        $data = $request->only([
-            'name',
-            'email',
-            'password',
-        ]);
+        $dto = new UpdateUserDto(
+            id: $id,
+            name: $request->validated('name'),
+            email: $request->validated('email'),
+            password: $request->validated('password'),
+        );
 
-        $user->update($data);
+        $user = $updateUserUseCase->handle($dto);
 
-        return $user;
+        return new UserResource($user);
     }
 
     /**
-     * Remove a specific user resource
-     *
-     * @return User
+     * Remove the specified user from storage
      *
      * @OA\Delete(
-     *      path="/users/{id}",
+     *      path="/users/{user}",
      *      operationId="deleteUser",
-     *      summary="Delete a specific user",
+     *      summary="Delete a user",
      *      tags={"Users"},
-     *      description="Deletes a specific user",
-     *      security={
-     *          {"bearerAuth": {}}
-     *      },
+     *      security={{"bearerAuth": {}}},
+     *
      *      @OA\Parameter(
-     *          name="id",
-     *          description="User ID",
-     *          required=true,
+     *          name="user",
      *          in="path",
+     *          required=true,
+     *
+     *          @OA\Schema(type="integer"),
+     *          description="User ID"
      *      ),
+     *
      *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *          response=204,
+     *          description="User deleted successfully"
      *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      )
+     *      @OA\Response(response=404, description="User not found"),
+     *      @OA\Response(response=401, description="Unauthenticated"),
+     *      @OA\Response(response=403, description="Forbidden")
      * )
      */
-    public function destroy(User $user)
+    public function destroy(int $id, DeleteUserUseCase $deleteUserUseCase): Response
     {
-        $user->delete();
+        $deleteUserUseCase->handle($id);
 
-        return $user;
+        return response()->noContent();
     }
 }
-
