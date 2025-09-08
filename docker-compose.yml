@@ -1,55 +1,119 @@
 services:
-    api:
-        build:
-            context: ./vendor/laravel/sail/runtimes/8.3
-            dockerfile: Dockerfile
-            args:
-                WWWGROUP: '${WWWGROUP:-1000}'
-        image: sail-8.3/app
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-        ports:
-            - '${APP_PORT:-8080}:80'
-        environment:
-            WWWUSER: '${WWWUSER:-1000}'
-            WWWGROUP: '${WWWGROUP:-1000}'
-            LARAVEL_SAIL: 1
-            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
-            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
-            IGNITION_LOCAL_SITES_PATH: '${PWD}'
+
+    nginx:
+        build: 00-infrastructure/devops/docker/nginx
+        container_name: eleven-nginx
+        restart: always
         volumes:
-            - '.:/var/www/html'
+            - .:/var/www
+            - ./00-infrastructure/devops/docker/nginx/local/default.conf:/etc/nginx/conf.d/default.conf
+        ports:
+            - "8081:80"
+            - "9001:9001"
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.2'
+                    memory: 64M
+                reservations:
+                    cpus: '0.1'
+                    memory: 16M
+
         networks:
-            - sail
+            - eleven-backend
         depends_on:
             - mysql
-    mysql:
-        image: 'mysql/mysql-server:8.0'
-        ports:
-            - '${FORWARD_DB_PORT:-3306}:3306'
-        environment:
-            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-password}'
-            MYSQL_ROOT_HOST: '%'
-            MYSQL_DATABASE: '${DB_DATABASE:-example_app}'
-            MYSQL_USER: '${DB_USERNAME:-sail}'
-            MYSQL_PASSWORD: '${DB_PASSWORD:-password}'
-            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+            - php-api
+
+    php-api:
+        # platform: linux/amd64
+        build:
+            context: 00-infrastructure/devops/docker/php-fpm/local
+        container_name: eleven-php-fpm
         volumes:
-            - 'sail-mysql:/var/lib/mysql'
-            - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+            - .:/var/www:delegated
+            - ./00-infrastructure/devops/docker/php-fpm/local/entrypoint.sh:/etc/entrypoint.sh
+            - ./00-infrastructure/devops/docker/php-fpm/local/confs/docker-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+            - ./00-infrastructure/devops/docker/php-fpm/local/confs/www.conf:/usr/local/etc/php-fpm.d/zz-custom.conf
+            - ./00-infrastructure/devops/docker/php-fpm/local/confs/opcache.ini:/usr/local/etc/php-fpm.d/opcache.ini
+        environment:
+            - CONTAINER_ROLE=app
+            - DOCKER_BUILDKIT=1
         networks:
-            - sail
-        healthcheck:
-            test:
-                - CMD
-                - mysqladmin
-                - ping
-                - '-p${DB_PASSWORD:-password}'
-            retries: 3
-            timeout: 5s
+            - eleven-backend
+        depends_on:
+            - mysql
+        deploy:
+            resources:
+                limits:
+                    cpus: '4.0'
+                    memory: 2G
+                reservations:
+                    cpus: '1.0'
+                    memory: 256M
+
+    mysql:
+        build: ./00-infrastructure/devops/docker/mysql
+        container_name: eleven-mysql
+        restart: always
+        tty: true
+        working_dir: /application
+        networks:
+            - eleven-backend
+        volumes:
+            - ./.data/mysql:/var/lib/mysql
+            - ./00-infrastructure/devops/docker/mysql/my.cnf:/etc/mysql/conf.d/custom.cnf
+        environment:
+            - MYSQL_DATABASE=eleven
+            - MYSQL_ROOT_PASSWORD=masterroot
+            - MYSQL_USER=eleven
+            - MYSQL_PASSWORD=eleven
+        ports:
+            - "3336:3306"
+        deploy:
+            resources:
+                limits:
+                    cpus: '4.0'
+                    memory: 2G
+                reservations:
+                    cpus: '1.0'
+                    memory: 256M
+
+    redis:
+        image: redis:latest
+        container_name: eleven-redis
+        ports:
+            - "6379:6379"
+        networks:
+            - eleven-backend
+        volumes:
+            - ./.data/redis:/data
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.2'
+                    memory: 128M
+                reservations:
+                    cpus: '0.1'
+                    memory: 32M
+
+    mailhog: # http://localhost:8025
+        image: mailhog/mailhog
+        container_name: eleven-mailhog
+        ports:
+            - "8025:8025"
+            - "1025:1025"
+        networks:
+            - eleven-backend
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.3'
+                    memory: 128M
+                reservations:
+                    cpus: '0.3'
+                    memory: 64M
+
 networks:
-    sail:
+    eleven-backend:
         driver: bridge
-volumes:
-    sail-mysql:
-        driver: local

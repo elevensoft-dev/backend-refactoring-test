@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
 return [
-
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
     /*
     |--------------------------------------------------------------------------
     | Application Name
